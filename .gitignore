@@ -26,3 +26,13 @@ replay_pid*
 *.settings/
 *.classpath
 *.project
+
+.factorypath
+target
+*.properties
+
+*.DS_Store
+.vscode/
+
+# ghostwriter backup files
+*.backup
