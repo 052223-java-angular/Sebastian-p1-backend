@@ -16,7 +16,7 @@ Pure Data is a visual dataflow programming environment for dsp, sound design, an
 
 - User registration and login
 - Browsing and searching for objects
-- Adding products to the database (& libraries) either manually or from .txt file
+- Adding objects and libraries to the database either manually or from .txt file
 - ability to update library to new version from puredata.info text files/deken
 - Modifying an object and/or library
 
