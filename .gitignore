@@ -33,7 +33,9 @@ build/
 .vscode/
 
 *.backup
+*.DS_Store
 
+target/
 ### Properties ###
 *.properties
 
