@@ -38,11 +38,9 @@ Pure Data is a visual dataflow programming environment for dsp, sound design, an
 - **Maven**: Used for managing project dependencies.
 - **Spring Boot**: Used for serving http responses and creating routes/paths.
 - **Angular and Typescript**: Used for displaying the site and client-side interaction.
-- **JUnit**: A testing framework for Java applications, used to ensure our code works as expected.
-- **Log4j**: A logging utility for debugging purposes.
 - **JDBC (Java Database Connectivity)**: An API for connecting and executing queries on the database.
 - **BCrypt**: A Java library for hashing and checking passwords for security.
-- **JUnit and Mockito**: Used for unit and integration testing.
+- **JUnit and Spring Boot**: Used for unit and integration testing.
 - **Git and GitHub**: Used for version control.
 
 ## Requirements
