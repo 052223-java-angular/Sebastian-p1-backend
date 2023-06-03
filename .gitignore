@@ -36,3 +36,6 @@ build/
 
 ### Properties ###
 *.properties
+
+### Logs ###
+*.log
