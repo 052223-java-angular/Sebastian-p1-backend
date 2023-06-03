@@ -15,9 +15,10 @@ Pure Data is a visual dataflow programming environment for dsp, sound design, an
 ## MVP (Minimum Viable Product)
 
 - User registration and login
-- Browsing and searching for objects
-- Adding objects and libraries to the database either manually or from .txt file
+- Browsing libraries and objects
+- Adding objects and libraries to the database
 - ability to update library to new version from puredata.info text files/deken
+- search by object name
 - Modifying an object and/or library
 
 ## Stretch Goals
@@ -25,7 +26,9 @@ Pure Data is a visual dataflow programming environment for dsp, sound design, an
 - Generate Dependency Tree for each object and/or library
 - Import object/library data from .md file
 - ability of server to download library and update names from object files. (potentially dealing w/ single-binary libraries and/or -meta.pd files)
-- ability to add/search by library or object tag
+- add objects from .txt file
+- search by library name
+- ability to add tags to search by
 - search by author
 
 ## Tech Stacks
@@ -35,11 +38,9 @@ Pure Data is a visual dataflow programming environment for dsp, sound design, an
 - **Maven**: Used for managing project dependencies.
 - **Spring Boot**: Used for serving http responses and creating routes/paths.
 - **Angular and Typescript**: Used for displaying the site and client-side interaction.
-- **JUnit**: A testing framework for Java applications, used to ensure our code works as expected.
-- **Log4j**: A logging utility for debugging purposes.
 - **JDBC (Java Database Connectivity)**: An API for connecting and executing queries on the database.
 - **BCrypt**: A Java library for hashing and checking passwords for security.
-- **JUnit and Mockito**: Used for unit and integration testing.
+- **JUnit and Spring Boot**: Used for unit and integration testing.
 - **Git and GitHub**: Used for version control.
 
 ## Requirements
