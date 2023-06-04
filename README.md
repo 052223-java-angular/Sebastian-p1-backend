@@ -10,7 +10,7 @@ Pure Data is a visual dataflow programming environment for dsp, sound design, an
 - **As a user**, I want to log in to my account so that I can add objects and libraries to the database.
 - **As a user**, I want to create/edit descriptions for libraries and objects only when logged in.
 - **As a user**, I want to browse through objects and libraries.
-- **As a user**, I want to search for objects and libraries by name.
+- **As a user**, I want to search libraries and objects by name
 
 ## MVP (Minimum Viable Product)
 
@@ -18,7 +18,7 @@ Pure Data is a visual dataflow programming environment for dsp, sound design, an
 - Browsing libraries and objects
 - Adding objects and libraries to the database
 - ability to update library to new version from puredata.info text files/deken
-- search by object name
+- search by object or library name
 - Modifying an object and/or library
 
 ## Stretch Goals
@@ -27,21 +27,23 @@ Pure Data is a visual dataflow programming environment for dsp, sound design, an
 - Import object/library data from .md file
 - ability of server to download library and update names from object files. (potentially dealing w/ single-binary libraries and/or -meta.pd files)
 - add objects from .txt file
-- search by library name
 - ability to add tags to search by
 - search by author
+- "following" activity in a library & receiving notifications
 
 ## Tech Stacks
 
 - **Java**: The main programming language used for building the application on the server.
-- **PostgreSQL**: Used as the database to store user, product, and order data.
+- **PostgreSQL**: Used as the database to store user, object, and library data.
 - **Maven**: Used for managing project dependencies.
-- **Spring Boot**: Used for serving http responses and creating routes/paths.
+- **Spring Boot**: Application Framework for creating web server backend and logging.
 - **Angular and Typescript**: Used for displaying the site and client-side interaction.
-- **JDBC (Java Database Connectivity)**: An API for connecting and executing queries on the database.
+- **Spring Data JPA**: Represents entity & data access layer.
 - **BCrypt**: A Java library for hashing and checking passwords for security.
-- **JUnit and Spring Boot**: Used for unit and integration testing.
+- **JUnit and Spring-Boot-Test**: Used for unit and integration testing.
 - **Git and GitHub**: Used for version control.
+- **Amazon Web Services (AWS)**: Will be used for hosting the application and the database, and managing other services like Lambda, S3, etc.
+- **Hibernate**: For object-relational mapping (ORM), allowing Java to interact with the database in an object-oriented manner.
 
 ## Requirements
 
