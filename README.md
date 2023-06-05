@@ -11,6 +11,7 @@ Pure Data is a visual dataflow programming environment for dsp, sound design, an
 - **As a user**, I want to create/edit descriptions for libraries and objects only when logged in.
 - **As a user**, I want to browse through objects and libraries.
 - **As a user**, I want to search libraries and objects by name
+- **As a user**, I want to leave comments on objects regarding their use and implementation
 
 ## MVP (Minimum Viable Product)
 
