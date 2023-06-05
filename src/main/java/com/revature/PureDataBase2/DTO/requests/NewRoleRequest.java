@@ -1,4 +1,4 @@
-package com.revature.yolp.dtos.requests;
+package com.revature.PureDataBase2.DTO.requests;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

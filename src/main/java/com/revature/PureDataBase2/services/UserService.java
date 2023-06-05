@@ -1,14 +1,14 @@
-package com.revature.yolp.services;
+package com.revature.PureDataBase2.services;
 
 import java.util.Optional;
 
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
-import com.revature.yolp.dtos.requests.NewUserRequest;
-import com.revature.yolp.entities.Role;
-import com.revature.yolp.entities.User;
-import com.revature.yolp.repositories.UserRepository;
+import com.revature.PureDataBase2.DTO.requests.NewUserRequest;
+import com.revature.PureDataBase2.entities.Role;
+import com.revature.PureDataBase2.entities.User;
+import com.revature.PureDataBase2.repositories.UserRepository;
 
 import lombok.AllArgsConstructor;
 

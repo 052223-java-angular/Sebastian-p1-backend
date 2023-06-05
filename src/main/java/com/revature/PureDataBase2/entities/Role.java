@@ -1,4 +1,4 @@
-package com.revature.yolp.entities;
+package com.revature.PureDataBase2.entities;
 
 import java.util.HashSet;
 import java.util.Set;

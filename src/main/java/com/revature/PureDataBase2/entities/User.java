@@ -1,4 +1,4 @@
-package com.revature.yolp.entities;
+package com.revature.PureDataBase2.entities;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -40,7 +40,15 @@ public class User {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @JsonManagedReference
-    private Set<Review> reviews;
+    private Set<ObjectComment> objectComments;
+
+    @OneToMany(mappedBy = "lastEditedBy", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private Set<Library> lastEditedByLibraries;
+
+    @OneToMany(mappedBy = "lastEditedBy", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private Set<PdObject> lastEditedByObjects;
 
     @ManyToOne
     @JoinColumn(name = "role_id")
@@ -51,7 +59,9 @@ public class User {
         this.id = UUID.randomUUID().toString();
         this.username = username;
         this.password = password;
-        this.reviews = new HashSet<>();
+        this.objectComments = new HashSet<ObjectComment>();
+        this.lastEditedByLibraries = new HashSet<Library>();
+        this.lastEditedByObjects = new HashSet<PdObject>();
         this.role = role;
     }
 

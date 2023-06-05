@@ -1,11 +1,11 @@
-package com.revature.yolp.services;
+package com.revature.PureDataBase2.services;
 
 import org.springframework.stereotype.Service;
 
-import com.revature.yolp.dtos.requests.NewRoleRequest;
-import com.revature.yolp.entities.Role;
-import com.revature.yolp.repositories.RoleRepository;
-import com.revature.yolp.utils.custom_exceptions.RoleNotFoundException;
+import com.revature.PureDataBase2.DTO.requests.NewRoleRequest;
+import com.revature.PureDataBase2.entities.Role;
+import com.revature.PureDataBase2.repositories.RoleRepository;
+import com.revature.PureDataBase2.util.custom_exceptions.RoleNotFoundException;
 
 import lombok.AllArgsConstructor;
 

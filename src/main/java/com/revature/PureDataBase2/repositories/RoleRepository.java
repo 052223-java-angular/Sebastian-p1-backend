@@ -1,11 +1,11 @@
-package com.revature.yolp.repositories;
+package com.revature.PureDataBase2.repositories;
 
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.revature.yolp.entities.Role;
+import com.revature.PureDataBase2.entities.Role;
 
 /**
  * The RoleRepository interface provides database operations for Role entities.

@@ -13,8 +13,8 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
+import jakarta.persistence.JoinColumn;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,34 +25,43 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "libraries")
-public class Library {
+@Table(name = "objects")
+public class PdObject {
     @Id
     private String id;
 
     @Column(nullable = false)
     private String name;
 
+    @ManyToOne
+    @JoinColumn(name = "library_id")
+    @JsonBackReference
+    private Library library;
+
     private String author;
 
-    @Column(name = "recent_version")
-    private String recentVersion;
+    @Column(name = "library_version")
+    private String libraryVersion;
 
     @ManyToOne
     @JoinColumn(name = "last_edited_by")
     @JsonBackReference
     private User lastEditedBy;
 
-    @OneToMany(mappedBy = "library", fetch = FetchType.LAZY)
+    private String description;
+
+    @OneToMany(mappedBy = "object", fetch = FetchType.LAZY)
     @JsonManagedReference
-    private Set<PdObject> objects;
-    
-    public Library (String name, User createdBy) {
+    private Set<ObjectComment> comments;
+
+    public PdObject(String name, Library library, User createdBy) {
         this.id = UUID.randomUUID().toString();
         this.name = name;
+        this.library = library;
         this.author = "";
-        this.recentVersion = "";
-        this.objects = new HashSet<PdObject>();
+        this.libraryVersion = "";
         this.lastEditedBy = createdBy;
+        this.description = "";
+        this.comments = new HashSet<ObjectComment>();
     }
 }

@@ -1,4 +1,4 @@
-package com.revature.yolp.controllers;
+package com.revature.PureDataBase2.controllers;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.revature.yolp.dtos.requests.NewUserRequest;
-import com.revature.yolp.services.UserService;
-import com.revature.yolp.utils.custom_exceptions.ResourceConflictException;
+import com.revature.PureDataBase2.DTO.requests.NewUserRequest;
+import com.revature.PureDataBase2.services.UserService;
+import com.revature.PureDataBase2.util.custom_exceptions.ResourceConflictException;
 
 import lombok.AllArgsConstructor;
 

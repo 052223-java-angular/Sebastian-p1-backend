@@ -1,4 +1,4 @@
-package com.revature.yolp.utils.custom_exceptions;
+package com.revature.PureDataBase2.util.custom_exceptions;
 
 public class RoleNotFoundException extends RuntimeException {
     public RoleNotFoundException(String message) {

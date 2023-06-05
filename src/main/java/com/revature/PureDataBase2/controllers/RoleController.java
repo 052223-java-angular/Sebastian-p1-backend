@@ -1,4 +1,4 @@
-package com.revature.yolp.controllers;
+package com.revature.PureDataBase2.controllers;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.revature.yolp.dtos.requests.NewRoleRequest;
-import com.revature.yolp.services.RoleService;
-import com.revature.yolp.utils.custom_exceptions.ResourceConflictException;
-import com.revature.yolp.utils.custom_exceptions.RoleNotFoundException;
+import com.revature.PureDataBase2.DTO.requests.NewRoleRequest;
+import com.revature.PureDataBase2.services.RoleService;
+import com.revature.PureDataBase2.util.custom_exceptions.ResourceConflictException;
+import com.revature.PureDataBase2.util.custom_exceptions.RoleNotFoundException;
 
 import lombok.AllArgsConstructor;
 
