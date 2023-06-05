@@ -36,7 +36,7 @@ public class PdObject {
     @ManyToOne
     @JoinColumn(name = "library_id")
     @JsonBackReference
-    private Library library;
+    private PdLibrary library;
 
     private String author;
 
@@ -54,7 +54,7 @@ public class PdObject {
     @JsonManagedReference
     private Set<ObjectComment> comments;
 
-    public PdObject(String name, Library library, User createdBy) {
+    public PdObject(String name, PdLibrary library, User createdBy) {
         this.id = UUID.randomUUID().toString();
         this.name = name;
         this.library = library;

@@ -44,7 +44,7 @@ public class User {
 
     @OneToMany(mappedBy = "lastEditedBy", fetch = FetchType.LAZY)
     @JsonManagedReference
-    private Set<Library> lastEditedByLibraries;
+    private Set<PdLibrary> lastEditedByLibraries;
 
     @OneToMany(mappedBy = "lastEditedBy", fetch = FetchType.LAZY)
     @JsonManagedReference
@@ -60,7 +60,7 @@ public class User {
         this.username = username;
         this.password = password;
         this.objectComments = new HashSet<ObjectComment>();
-        this.lastEditedByLibraries = new HashSet<Library>();
+        this.lastEditedByLibraries = new HashSet<PdLibrary>();
         this.lastEditedByObjects = new HashSet<PdObject>();
         this.role = role;
     }

@@ -26,7 +26,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "libraries")
-public class Library {
+public class PdLibrary {
     @Id
     private String id;
 
@@ -47,7 +47,7 @@ public class Library {
     @JsonManagedReference
     private Set<PdObject> objects;
     
-    public Library (String name, User createdBy) {
+    public PdLibrary (String name, User createdBy) {
         this.id = UUID.randomUUID().toString();
         this.name = name;
         this.author = "";
