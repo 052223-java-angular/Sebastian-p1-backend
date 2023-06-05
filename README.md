@@ -42,7 +42,8 @@ Pure Data is a visual dataflow programming environment for dsp, sound design, an
 - **Angular and Typescript**: Used for displaying the site and client-side interaction.
 - **Spring Data JPA**: Represents entity & data access layer.
 - **BCrypt**: A Java library for hashing and checking passwords for security.
-- **JUnit and Spring-Boot-Test**: Used for unit and integration testing.
+- **JUnit and Mockito/Spring-Boot-Test**: Used for unit and integration testing.
+- **Log4j**: A logging utility for debugging purposes.
 - **Git and GitHub**: Used for version control.
 - **Amazon Web Services (AWS)**: Will be used for hosting the application and the database, and managing other services like Lambda, S3, etc.
 - **Hibernate**: For object-relational mapping (ORM), allowing Java to interact with the database in an object-oriented manner.
