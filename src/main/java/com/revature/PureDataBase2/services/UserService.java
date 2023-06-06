@@ -6,9 +6,13 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import com.revature.PureDataBase2.DTO.requests.NewUserRequest;
+import com.revature.PureDataBase2.DTO.requests.NewLoginRequest;
+import com.revature.PureDataBase2.DTO.responses.Principal;
 import com.revature.PureDataBase2.entities.Role;
 import com.revature.PureDataBase2.entities.User;
 import com.revature.PureDataBase2.repositories.UserRepository;
+
+import com.revature.PureDataBase2.util.custom_exceptions.UserNotFoundException;
 
 import lombok.AllArgsConstructor;
 
@@ -39,6 +43,19 @@ public class UserService {
 
         // save and return user
         return userRepo.save(newUser);
+    }
+
+    public Principal login(NewLoginRequest req) {
+        Optional<User> userOpt = userRepo.findByUsername(req.getUsername());
+
+        if (userOpt.isPresent()) {
+            User foundUser = userOpt.get();
+            if (BCrypt.checkpw(req.getPassword(), foundUser.getPassword())) {
+                return new Principal(foundUser);
+            }
+        }
+
+        throw new UserNotFoundException("Invalid credential");
     }
 
     /**

@@ -12,9 +12,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.revature.PureDataBase2.DTO.requests.NewLoginRequest;
 import com.revature.PureDataBase2.DTO.requests.NewUserRequest;
+import com.revature.PureDataBase2.DTO.responses.Principal;
 import com.revature.PureDataBase2.services.UserService;
+import com.revature.PureDataBase2.services.JWTService;
 import com.revature.PureDataBase2.util.custom_exceptions.ResourceConflictException;
+import com.revature.PureDataBase2.util.custom_exceptions.UserNotFoundException;
 
 import lombok.AllArgsConstructor;
 
@@ -26,6 +30,7 @@ import lombok.AllArgsConstructor;
 @RequestMapping("/auth")
 public class AuthController {
     private final UserService userService;
+    private final JWTService tokenService;
 
     /**
      * Registers a new user.
@@ -35,7 +40,7 @@ public class AuthController {
      *         of the registration
      */
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody NewUserRequest req) {
+    public ResponseEntity<Principal> registerUser(@RequestBody NewUserRequest req) {
         // if username is not valid, throw exception
         if (!userService.isValidUsername(req.getUsername())) {
             throw new ResourceConflictException(
@@ -59,24 +64,25 @@ public class AuthController {
         }
 
         // register user
-        userService.registerUser(req);
+        Principal principal = new Principal(userService.registerUser(req));
+        String token = tokenService.generateToken(principal);
+        principal.setToken(token);
 
         // return 201 - CREATED
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(principal);
     }
 
-    /**
-     * Exception handler for ResourceConflictException.
-     *
-     * @param e the ResourceConflictException to handle
-     * @return ResponseEntity with the error message and status code indicating
-     *         resource conflict
-     */
-    @ExceptionHandler(ResourceConflictException.class)
-    public ResponseEntity<Map<String, Object>> handleResourceConflictException(ResourceConflictException e) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("timestamp", new Date(System.currentTimeMillis()));
-        map.put("message", e.getMessage());
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(map);
+    @PostMapping("/login")
+    public ResponseEntity<Principal> login(@RequestBody NewLoginRequest req) {
+        // userservice to call login method
+        Principal principal = userService.login(req);
+
+        // create a jwt token
+        String token = tokenService.generateToken(principal);
+
+        principal.setToken(token);
+
+        // return status ok and return principal object
+        return ResponseEntity.status(HttpStatus.OK).body(principal);
     }
 }

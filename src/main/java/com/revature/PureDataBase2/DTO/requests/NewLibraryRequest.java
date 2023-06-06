@@ -5,14 +5,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/**
- * The NewRoleRequest class represents a request for creating a new role.
- */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class NewRoleRequest {
+public class NewLibraryRequest {
     private String name;
     private String token;
 }

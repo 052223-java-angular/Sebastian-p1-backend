@@ -1,11 +1,9 @@
 package com.revature.PureDataBase2.entities;
 
 import java.util.UUID;
-import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -21,33 +19,25 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "object_comments")
-public class ObjectComment {
+@Table(name = "object_tags")
+public class ObjectTag {
     @Id
     private String id;
 
-    @Column(nullable = false)
-    private String comment;
-
-    @Column(nullable = false, name = "time_posted")
-    private Date timePosted;
-
     @ManyToOne
     @JoinColumn(name = "object_id")
-    @JsonIgnoreProperties("comments")
+    @JsonIgnoreProperties("objectTags")
     private PdObject object;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    @JsonIgnoreProperties("objectComments")
-    private User user;
+    @JoinColumn(name = "tag_id")
+    @JsonIgnoreProperties("objectTags")
+    private Tag tag;
 
-    public ObjectComment(String comment, Date timePosted, PdObject object, User user) {
+    public ObjectTag(PdObject object, Tag tag) {
         this.id = UUID.randomUUID().toString();
-        this.comment = comment;
-        this.timePosted = timePosted;
         this.object = object;
-        this.user = user;
+        this.tag = tag;
     }
 
 }

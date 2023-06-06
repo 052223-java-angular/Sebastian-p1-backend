@@ -43,17 +43,19 @@ public class User {
     private Set<ObjectComment> objectComments;
 
     @OneToMany(mappedBy = "lastEditedBy", fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @JsonBackReference
     private Set<PdLibrary> lastEditedByLibraries;
 
     @OneToMany(mappedBy = "lastEditedBy", fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @JsonBackReference
     private Set<PdObject> lastEditedByObjects;
 
     @ManyToOne
-    @JoinColumn(name = "role_id")
+    @JoinColumn(nullable = false, name = "role_id")
     @JsonBackReference
     private Role role;
+
+    private String email;
 
     public User(String username, String password, Role role) {
         this.id = UUID.randomUUID().toString();
@@ -63,6 +65,7 @@ public class User {
         this.lastEditedByLibraries = new HashSet<PdLibrary>();
         this.lastEditedByObjects = new HashSet<PdObject>();
         this.role = role;
+        this.email = "";
     }
 
 }
