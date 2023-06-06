@@ -45,7 +45,7 @@ public class PdObject {
 
     @ManyToOne
     @JoinColumn(name = "last_edited_by")
-    @JsonBackReference
+    @JsonManagedReference
     private User lastEditedBy;
 
     private String description;

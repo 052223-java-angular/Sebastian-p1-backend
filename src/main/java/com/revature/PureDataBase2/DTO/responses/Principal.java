@@ -1,5 +1,7 @@
 package com.revature.PureDataBase2.DTO.responses;
 
+import com.revature.PureDataBase2.entities.User;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,4 +20,10 @@ public class Principal {
     private String username;
     private String role;
     private String token;
+
+    public Principal(User user) {
+        this.id = user.getId();
+        this.username = user.getUsername();
+        this.role = user.getRole().getName();
+    }
 }
