@@ -44,34 +44,4 @@ public class RoleController {
         roleService.saveRole(req);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
-
-    /**
-     * Exception handler for ResourceConflictException.
-     *
-     * @param e the ResourceConflictException to handle
-     * @return ResponseEntity with the error message and status code indicating
-     *         resource conflict
-     */
-    @ExceptionHandler(ResourceConflictException.class)
-    public ResponseEntity<Map<String, Object>> handleResourceConflictException(ResourceConflictException e) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("timestamp", new Date(System.currentTimeMillis()));
-        map.put("message", e.getMessage());
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(map);
-    }
-
-    /**
-     * Exception handler for RoleNotFoundException.
-     *
-     * @param e the RoleNotFoundException to handle
-     * @return ResponseEntity with the error message and status code indicating role
-     *         not found
-     */
-    @ExceptionHandler(RoleNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleRoleNotFoundException(RoleNotFoundException e) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("timestamp", new Date(System.currentTimeMillis()));
-        map.put("message", e.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(map);
-    }
 }
