@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -51,8 +52,12 @@ public class PdObject {
     private String description;
 
     @OneToMany(mappedBy = "object", fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @JsonIgnoreProperties("object")
     private Set<ObjectComment> comments;
+
+    @OneToMany(mappedBy = "object", fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("object")
+    private Set<ObjectTag> objectTags;
 
     public PdObject(String name, PdLibrary library, User createdBy) {
         this.id = UUID.randomUUID().toString();
@@ -63,5 +68,6 @@ public class PdObject {
         this.lastEditedBy = createdBy;
         this.description = "";
         this.comments = new HashSet<ObjectComment>();
+        this.objectTags = new HashSet<ObjectTag>();
     }
 }
