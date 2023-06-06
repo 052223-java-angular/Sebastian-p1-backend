@@ -1,12 +1,7 @@
 package com.revature.PureDataBase2.controllers;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +13,6 @@ import com.revature.PureDataBase2.DTO.responses.Principal;
 import com.revature.PureDataBase2.services.UserService;
 import com.revature.PureDataBase2.services.JWTService;
 import com.revature.PureDataBase2.util.custom_exceptions.ResourceConflictException;
-import com.revature.PureDataBase2.util.custom_exceptions.UserNotFoundException;
 
 import lombok.AllArgsConstructor;
 

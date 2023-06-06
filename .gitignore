@@ -42,3 +42,4 @@ target/
 
 ### Logs ###
 *.log
+*.gz
