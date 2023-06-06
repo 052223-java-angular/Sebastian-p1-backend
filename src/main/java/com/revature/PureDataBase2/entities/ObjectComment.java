@@ -42,10 +42,10 @@ public class ObjectComment {
     @JsonIgnoreProperties("objectComments")
     private User user;
 
-    public ObjectComment(String comment, Date timePosted, PdObject object, User user) {
+    public ObjectComment(String comment, PdObject object, User user) {
         this.id = UUID.randomUUID().toString();
         this.comment = comment;
-        this.timePosted = timePosted;
+        this.timePosted = new Date();
         this.object = object;
         this.user = user;
     }
