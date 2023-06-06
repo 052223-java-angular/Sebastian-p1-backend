@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -31,7 +31,7 @@ public class Role {
     private String name;
 
     @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @JsonBackReference
     private Set<User> users;
 
     public Role(String name) {

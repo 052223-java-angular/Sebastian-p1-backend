@@ -1,11 +1,13 @@
 package com.revature.PureDataBase2.entities;
 
 import java.util.HashSet;
+import java.util.TreeSet;
 import java.util.Set;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -52,10 +54,13 @@ public class User {
 
     @ManyToOne
     @JoinColumn(nullable = false, name = "role_id")
-    @JsonBackReference
+    @JsonManagedReference
     private Role role;
 
     private String email;
+    @OneToMany(mappedBy = "user_id", fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("user")
+    private Set<HistoryItem> historyItems;
 
     public User(String username, String password, Role role) {
         this.id = UUID.randomUUID().toString();
@@ -66,6 +71,6 @@ public class User {
         this.lastEditedByObjects = new HashSet<PdObject>();
         this.role = role;
         this.email = "";
+        this.historyItems = new TreeSet<HistoryItem>();
     }
-
 }
