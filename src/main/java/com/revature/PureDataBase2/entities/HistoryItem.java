@@ -3,7 +3,7 @@ package com.revature.PureDataBase2.entities;
 import java.util.UUID;
 import java.util.Date;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -38,13 +38,12 @@ public class HistoryItem implements Comparable<HistoryItem> {
     @Enumerated(EnumType.ORDINAL)
     private EntityType entityType;
 
-    @ManyToOne
-    @JoinColumn(name = "entity_id")
+    @Column(name = "entity_id")
     private String entityId;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @JsonBackReference
+    @JsonIgnoreProperties("historyItems")
     private User user;
 
     // must be comparable for user history treeset

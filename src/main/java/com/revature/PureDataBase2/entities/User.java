@@ -58,7 +58,8 @@ public class User {
     private Role role;
 
     private String email;
-    @OneToMany(mappedBy = "user_id", fetch = FetchType.LAZY)
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @JsonIgnoreProperties("user")
     private Set<HistoryItem> historyItems;
 
