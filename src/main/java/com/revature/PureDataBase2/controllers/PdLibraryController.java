@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.revature.PureDataBase2.entities.PdLibrary;
 import com.revature.PureDataBase2.DTO.requests.NewLibraryRequest;
-import com.revature.PureDataBase2.entities.NewLibraryRequest;
 
 import jakarta.servlet.http.HttpServletRequest;
 
