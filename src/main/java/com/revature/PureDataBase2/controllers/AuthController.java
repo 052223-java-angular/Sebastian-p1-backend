@@ -3,6 +3,7 @@ package com.revature.PureDataBase2.controllers;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,7 +14,9 @@ import com.revature.PureDataBase2.DTO.responses.Principal;
 import com.revature.PureDataBase2.services.UserService;
 import com.revature.PureDataBase2.services.JWTService;
 import com.revature.PureDataBase2.util.custom_exceptions.ResourceConflictException;
+import com.revature.PureDataBase2.util.custom_exceptions.UnauthorizedException;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 
 /**
@@ -78,5 +81,13 @@ public class AuthController {
 
         // return status ok and return principal object
         return ResponseEntity.status(HttpStatus.OK).body(principal);
+    }
+
+    @GetMapping("/check")
+    public ResponseEntity<?> check(HttpServletRequest sreq) {
+        // userservice to call login method
+        
+        tokenService.extractUsername(sreq.getHeader("auth-token"));
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

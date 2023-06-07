@@ -5,9 +5,10 @@ import java.util.TreeSet;
 import java.util.Set;
 import java.util.UUID;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,14 +31,14 @@ import lombok.Setter;
 @Table(name = "users")
 public class User {
     @Id
+    @JsonIgnore
     private String id;
 
-    // set the column username to username
-    @Column(name = "username", nullable = false)
+    @Column(nullable = false)
     private String username;
 
-    // by default column password is password
     @Column(nullable = false)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
@@ -45,22 +46,22 @@ public class User {
     private Set<ObjectComment> objectComments;
 
     @OneToMany(mappedBy = "lastEditedBy", fetch = FetchType.LAZY)
-    @JsonBackReference
+    @JsonIgnore
     private Set<PdLibrary> lastEditedByLibraries;
 
     @OneToMany(mappedBy = "lastEditedBy", fetch = FetchType.LAZY)
-    @JsonBackReference
+    @JsonIgnore
     private Set<PdObject> lastEditedByObjects;
 
     @ManyToOne
     @JoinColumn(nullable = false, name = "role_id")
-    @JsonManagedReference
+    @JsonBackReference(value="user-role")
     private Role role;
 
     private String email;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    @JsonIgnoreProperties("user")
+    @JsonIgnore
     private Set<HistoryItem> historyItems;
 
     public User(String username, String password, Role role) {

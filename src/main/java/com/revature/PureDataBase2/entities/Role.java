@@ -4,7 +4,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -25,13 +26,14 @@ import lombok.Setter;
 @Table(name = "roles")
 public class Role {
     @Id
+    @JsonIgnore
     private String id;
 
     @Column(name = "name", nullable = false)
     private String name;
 
     @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
-    @JsonBackReference
+    @JsonManagedReference(value="user-role")
     private Set<User> users;
 
     public Role(String name) {

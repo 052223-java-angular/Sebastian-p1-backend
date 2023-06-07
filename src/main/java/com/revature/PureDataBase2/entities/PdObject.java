@@ -7,6 +7,7 @@ import java.util.UUID;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -29,6 +30,7 @@ import lombok.Setter;
 @Table(name = "objects")
 public class PdObject {
     @Id
+    @JsonIgnore
     private String id;
 
     @Column(nullable = false)
@@ -36,7 +38,7 @@ public class PdObject {
 
     @ManyToOne
     @JoinColumn(name = "library_id")
-    @JsonBackReference
+    @JsonBackReference(value = "library-objects")
     private PdLibrary library;
 
     private String author;
@@ -46,7 +48,7 @@ public class PdObject {
 
     @ManyToOne
     @JoinColumn(name = "last_edited_by")
-    @JsonManagedReference
+    @JsonIgnore
     private User lastEditedBy;
 
     private String description;

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.revature.PureDataBase2.util.custom_exceptions.ResourceConflictException;
 import com.revature.PureDataBase2.util.custom_exceptions.RoleNotFoundException;
 import com.revature.PureDataBase2.util.custom_exceptions.UserNotFoundException;
+import com.revature.PureDataBase2.util.custom_exceptions.UnauthorizedException;
 
 @RestControllerAdvice
 public class ExceptionController {
@@ -53,4 +54,13 @@ public class ExceptionController {
         map.put("message", e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(map);
     }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<Map<String, Object>> handleUnauthorizedException(UnauthorizedException e) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("timestamp", new Date(System.currentTimeMillis()));
+        map.put("message", e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(map);
+    }
+
 }

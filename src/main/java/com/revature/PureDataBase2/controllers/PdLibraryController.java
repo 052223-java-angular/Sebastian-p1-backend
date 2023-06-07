@@ -1,6 +1,7 @@
 package com.revature.PureDataBase2.controllers;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,28 +12,43 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.revature.PureDataBase2.entities.PdLibrary;
-import com.revature.PureDataBase2.DTO.requests.NewLibraryRequest;
+import com.revature.PureDataBase2.entities.User;
+import com.revature.PureDataBase2.services.JWTService;
+import com.revature.PureDataBase2.services.UserService;
+import com.revature.PureDataBase2.services.PdLibraryService;
+import com.revature.PureDataBase2.util.custom_exceptions.ResourceConflictException;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
 @RestController
 @RequestMapping("/library")
 public class PdLibraryController {
     // dependency injection ie. services
+    private final JWTService tokenService;
+    private final UserService userService;
+    private final PdLibraryService pdLibraryService;
 
     @PostMapping("/create")
-    public ResponseEntity<?> createLibrary(@RequestBody NewLibraryRequest req, HttpServletRequest sreq) {
+    public ResponseEntity<?> createLibrary(@RequestBody PdLibrary library,
+            HttpServletRequest req) {
         // only users can create new library
-
-        String token = sreq.getHeader("auth-token");
-
-        // get token from req
+        String userId = tokenService.extractUserId(req.getHeader("auth-token")); 
+        // if library is not unique, throw exception
+        User user = userService.getById(userId);
+        if (!pdLibraryService.isUnique(library.getName())) {
+            throw new ResourceConflictException("Library is not unique");
+        }
+        library.setId(UUID.randomUUID().toString());
+        pdLibraryService.create(library, user);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping("/all")
     public ResponseEntity<List<PdLibrary>> getAllLibraries() {
-        // return all restaurants
-        return null;
+        // return all libraries
+        return ResponseEntity.status(HttpStatus.OK).body(pdLibraryService.getAll());
     }
 }
