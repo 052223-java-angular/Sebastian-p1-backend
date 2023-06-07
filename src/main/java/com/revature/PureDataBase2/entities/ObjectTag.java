@@ -3,6 +3,7 @@ package com.revature.PureDataBase2.entities;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -22,6 +23,7 @@ import lombok.Setter;
 @Table(name = "object_tags")
 public class ObjectTag {
     @Id
+    @JsonIgnore
     private String id;
 
     @ManyToOne

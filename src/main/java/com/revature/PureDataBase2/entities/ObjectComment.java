@@ -4,6 +4,7 @@ import java.util.UUID;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -24,6 +25,7 @@ import lombok.Setter;
 @Table(name = "object_comments")
 public class ObjectComment {
     @Id
+    @JsonIgnore
     private String id;
 
     @Column(nullable = false)

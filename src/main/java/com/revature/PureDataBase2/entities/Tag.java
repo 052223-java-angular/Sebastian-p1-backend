@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -25,6 +26,7 @@ import lombok.Setter;
 @Table(name = "tags")
 public class Tag {
     @Id
+    @JsonIgnore
     private String id;
 
     @Column(nullable = false)

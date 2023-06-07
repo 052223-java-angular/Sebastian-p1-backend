@@ -34,7 +34,7 @@ public class JWTService {
     }
 
     public boolean validateToken(String token, Principal userPrincipal) {
-    String tokenUsername = extractUsername(token);
+        String tokenUsername = extractUsername(userPrincipal.getToken());
         return (tokenUsername.equals(userPrincipal.getUsername()));
     }
 
@@ -43,13 +43,12 @@ public class JWTService {
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-    final Claims claims = extractAllClaims(token);
+        final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
 
     private Claims extractAllClaims(String token) {
-    return
-        Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
+        return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
     }
 
     public String extractUserId(String token) {
@@ -59,4 +58,5 @@ public class JWTService {
     public String extractUserRole(String token) {
         return (String) extractAllClaims(token).get("role");
     }
+
 }

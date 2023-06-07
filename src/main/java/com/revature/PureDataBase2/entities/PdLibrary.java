@@ -4,8 +4,9 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.UUID;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,23 +29,25 @@ import lombok.Setter;
 @Table(name = "libraries")
 public class PdLibrary {
     @Id
+    @JsonIgnore
     private String id;
 
     @Column(nullable = false)
     private String name;
 
-    private String author;
+    private String author = "";
 
     @Column(name = "recent_version")
-    private String recentVersion;
+    private String recentVersion = "";
 
     @ManyToOne
     @JoinColumn(name = "last_edited_by")
-    @JsonManagedReference
+    @JsonIgnore
     private User lastEditedBy;
 
     @OneToMany(mappedBy = "library", fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @JsonManagedReference(value="library-objects")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Set<PdObject> objects;
     
     public PdLibrary (String name, User createdBy) {

@@ -25,6 +25,13 @@ public class UserService {
     private final RoleService roleService;
     private final UserRepository userRepo;
 
+    public User getById(String id) {
+        Optional<User> userOpt = userRepo.findById(id);
+
+        if(userOpt.isEmpty()) throw new UserNotFoundException("no user found");
+        return userOpt.get();
+    }
+
     /**
      * Registers a new user based on the provided information.
      *

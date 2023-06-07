@@ -1,4 +1,5 @@
 package com.revature.PureDataBase2.DTO.requests;
+import com.revature.PureDataBase2.DTO.responses.Principal;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,6 +11,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class NewLibraryRequest {
-    private String name;
-    private String token;
+    private Principal principal;
+    private String libraryName;
 }
