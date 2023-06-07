@@ -4,13 +4,15 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.UUID;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+//import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -45,9 +47,9 @@ public class PdLibrary {
     @JsonIgnore
     private User lastEditedBy;
 
-    @OneToMany(mappedBy = "library", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "library", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("{library, comments}")
     @JsonManagedReference(value="library-objects")
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Set<PdObject> objects;
     
     public PdLibrary (String name, User createdBy) {
@@ -58,6 +60,7 @@ public class PdLibrary {
         this.objects = new HashSet<PdObject>();
         this.lastEditedBy = createdBy;
     }
+
     public PdLibrary () {
         this.id = UUID.randomUUID().toString();
         this.author = "";

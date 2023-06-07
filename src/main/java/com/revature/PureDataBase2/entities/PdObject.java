@@ -4,8 +4,8 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.UUID;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 //import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -19,11 +19,11 @@ import jakarta.persistence.Table;
 import jakarta.persistence.JoinColumn;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+//import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @AllArgsConstructor
-@NoArgsConstructor
+//@NoArgsConstructor
 @Getter
 @Setter
 @Entity
@@ -72,4 +72,15 @@ public class PdObject {
         this.comments = new HashSet<ObjectComment>();
         this.objectTags = new HashSet<ObjectTag>();
     }
+
+    public PdObject() {
+        this.id = UUID.randomUUID().toString();
+        System.out.println("made no-constructor id: " + this.id);
+        this.libraryVersion = "";
+        this.description = "";
+        this.comments = new HashSet<ObjectComment>();
+        this.objectTags = new HashSet<ObjectTag>();
+        this.libraryVersion = "";
+    }
+
 }
