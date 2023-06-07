@@ -18,11 +18,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+//import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @AllArgsConstructor
-@NoArgsConstructor
+//@NoArgsConstructor
 @Getter
 @Setter
 @Entity
@@ -35,10 +35,10 @@ public class PdLibrary {
     @Column(nullable = false)
     private String name;
 
-    private String author = "";
+    private String author;
 
     @Column(name = "recent_version")
-    private String recentVersion = "";
+    private String recentVersion;
 
     @ManyToOne
     @JoinColumn(name = "last_edited_by")
@@ -58,4 +58,11 @@ public class PdLibrary {
         this.objects = new HashSet<PdObject>();
         this.lastEditedBy = createdBy;
     }
+    public PdLibrary () {
+        this.id = UUID.randomUUID().toString();
+        this.author = "";
+        this.recentVersion = "";
+        this.objects = new HashSet<PdObject>();
+    }
+
 }

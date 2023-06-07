@@ -41,7 +41,6 @@ public class PdLibraryController {
         if (!pdLibraryService.isUnique(library.getName())) {
             throw new ResourceConflictException("Library is not unique");
         }
-        library.setId(UUID.randomUUID().toString());
         pdLibraryService.create(library, user);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
