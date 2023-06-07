@@ -4,6 +4,7 @@ import java.util.UUID;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
@@ -42,6 +43,7 @@ public class ObjectComment {
     @ManyToOne
     @JoinColumn(name = "user_id")
     @JsonIgnoreProperties("objectComments")
+    @JsonBackReference
     private User user;
 
     public ObjectComment(String comment, PdObject object, User user) {

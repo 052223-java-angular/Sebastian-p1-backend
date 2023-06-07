@@ -1,7 +1,6 @@
 package com.revature.PureDataBase2.controllers;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.revature.PureDataBase2.entities.PdLibrary;
+import com.revature.PureDataBase2.entities.PdObject;
 import com.revature.PureDataBase2.entities.User;
 import com.revature.PureDataBase2.services.JWTService;
 import com.revature.PureDataBase2.services.UserService;
@@ -40,6 +40,10 @@ public class PdLibraryController {
         User user = userService.getById(userId);
         if (!pdLibraryService.isUnique(library.getName())) {
             throw new ResourceConflictException("Library is not unique");
+        }
+        for(PdObject o : library.getObjects()) {
+            o.setLibrary(library);
+            o.setLastEditedBy(user);
         }
         pdLibraryService.create(library, user);
         return ResponseEntity.status(HttpStatus.CREATED).build();
