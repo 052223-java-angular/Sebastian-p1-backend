@@ -35,7 +35,7 @@ public class PdLibraryController {
     private final UserService userService;
     private final PdLibraryService pdLibraryService;
 
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<?> createLibrary(@RequestBody PdLibrary library,
             HttpServletRequest req) {
         // only users can create new library
@@ -72,7 +72,7 @@ public class PdLibraryController {
             pdLibraryService.getObjectByNameAndLibrary(objectName, library));
     }
 
-    @PostMapping("/{libName}/create")
+    @PostMapping("/{libName}")
     public ResponseEntity<?> saveObject(@PathVariable String libName,
         @RequestBody PdObject object, HttpServletRequest req) {
         // only users can create new library

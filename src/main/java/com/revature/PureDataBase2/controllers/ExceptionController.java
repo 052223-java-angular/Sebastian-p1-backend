@@ -62,7 +62,7 @@ public class ExceptionController {
     public ResponseEntity<Map<String, Object>> handleJWTException(JwtException e) {
         Map<String, Object> map = new HashMap<>();
         map.put("timestamp", new Date(System.currentTimeMillis()));
-        map.put("message", e.getMessage());
+        map.put("message", "JWT Deserialization Error");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map);
     }
 
