@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
+import io.jsonwebtoken.JwtException;
 import com.revature.PureDataBase2.util.custom_exceptions.ResourceConflictException;
 import com.revature.PureDataBase2.util.custom_exceptions.ObjectNotFoundException;
 import com.revature.PureDataBase2.util.custom_exceptions.LibraryNotFoundException;
@@ -56,6 +56,14 @@ public class ExceptionController {
         map.put("timestamp", new Date(System.currentTimeMillis()));
         map.put("message", e.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(map);
+    }
+ 
+    @ExceptionHandler(JwtException.class)
+    public ResponseEntity<Map<String, Object>> handleJWTException(JwtException e) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("timestamp", new Date(System.currentTimeMillis()));
+        map.put("message", e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map);
     }
 
     /**

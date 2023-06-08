@@ -10,6 +10,7 @@ import com.revature.PureDataBase2.repositories.PdObjectRepository;
 import com.revature.PureDataBase2.entities.User;
 import com.revature.PureDataBase2.entities.PdLibrary;
 import com.revature.PureDataBase2.entities.PdObject;
+import com.revature.PureDataBase2.DTO.requests.PdEditObject;
 import com.revature.PureDataBase2.util.custom_exceptions.LibraryNotFoundException;
 import com.revature.PureDataBase2.util.custom_exceptions.ObjectNotFoundException;
 
@@ -60,6 +61,31 @@ public class PdLibraryService {
         object.setLastEditedBy(user);
 
         return objectRepo.save(object);
+    }
+
+    public PdObject updateObject(PdEditObject editObject, PdObject prevObject, User user,
+        PdLibrary library) {
+
+        //TODO merge tags if not null
+        String editString;
+        editString = editObject.getName();
+        if(editString != null) prevObject.setName(editString);
+        editString = editObject.getAuthor();
+        if(editString != null) prevObject.setAuthor(editString);
+        editString = editObject.getLibVersion();
+        if(editString != null) prevObject.setLibraryVersion(editString);
+        editString = editObject.getDescription();
+        if(editString != null) prevObject.setDescription(editString);
+        editString = editObject.getLibName();
+        if(editString != null)
+            if(!editString.equals(library.getName())) {
+                library = this.getByName(editString);
+                prevObject.setLibrary(library);
+                
+            }
+        prevObject.setLastEditedBy(user);
+
+        return objectRepo.save(prevObject);
     }
 
     public PdLibrary create(PdLibrary library, User user) {

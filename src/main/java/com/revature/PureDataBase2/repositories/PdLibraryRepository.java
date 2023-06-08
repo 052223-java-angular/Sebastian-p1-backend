@@ -13,6 +13,5 @@ import com.revature.PureDataBase2.entities.PdLibrary;
 
 @Repository
 public interface PdLibraryRepository extends JpaRepository<PdLibrary, String> {
-
     Optional<PdLibrary> findByName(String name);
 }
