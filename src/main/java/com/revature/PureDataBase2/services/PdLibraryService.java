@@ -1,12 +1,14 @@
 package com.revature.PureDataBase2.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.revature.PureDataBase2.repositories.PdLibraryRepository;
 import com.revature.PureDataBase2.entities.User;
 import com.revature.PureDataBase2.entities.PdLibrary;
+import com.revature.PureDataBase2.util.custom_exceptions.LibraryNotFoundException;
 
 import lombok.AllArgsConstructor;
 
@@ -18,6 +20,13 @@ import lombok.AllArgsConstructor;
 public class PdLibraryService {
     private final PdLibraryRepository libraryRepo;
     // should I validate library name?
+
+    public PdLibrary getByName(String name) {
+        Optional<PdLibrary> libOpt = libraryRepo.findByName(name);
+
+        if(libOpt.isEmpty()) throw new LibraryNotFoundException("no library found");
+        return libOpt.get();
+    }
 
     public boolean isUnique(String name) {
         return libraryRepo.findByName(name).isEmpty();

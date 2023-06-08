@@ -76,6 +76,7 @@ public class PdObject {
     public PdObject() {
         this.id = UUID.randomUUID().toString();
         System.out.println("made no-constructor id: " + this.id);
+        this.author = "";
         this.libraryVersion = "";
         this.description = "";
         this.comments = new HashSet<ObjectComment>();
