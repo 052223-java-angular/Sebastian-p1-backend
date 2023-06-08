@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import com.revature.PureDataBase2.entities.PdLibrary;
 import com.revature.PureDataBase2.entities.PdObject;
@@ -53,5 +54,10 @@ public class PdLibraryController {
     public ResponseEntity<List<PdLibrary>> getAllLibraries() {
         // return all libraries
         return ResponseEntity.status(HttpStatus.OK).body(pdLibraryService.getAll());
+    }
+
+    @GetMapping("/{libName}")
+    public ResponseEntity<PdLibrary> getLibrary(@PathVariable String libName) {
+        return ResponseEntity.status(HttpStatus.OK).body(pdLibraryService.getByName(libName));
     }
 }
