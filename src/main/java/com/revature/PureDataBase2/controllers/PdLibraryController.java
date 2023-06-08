@@ -60,4 +60,28 @@ public class PdLibraryController {
     public ResponseEntity<PdLibrary> getLibrary(@PathVariable String libName) {
         return ResponseEntity.status(HttpStatus.OK).body(pdLibraryService.getByName(libName));
     }
+
+    @GetMapping("/{libName}/{objectName}")
+    public ResponseEntity<PdObject> getObjectByLibrary(@PathVariable String libName,
+        @PathVariable String objectName) {
+        PdLibrary library = pdLibraryService.getByName(libName);
+        return ResponseEntity.status(HttpStatus.OK).body(
+            pdLibraryService.getObjectByNameAndLibrary(objectName, library));
+    }
+
+    @PostMapping("/{libName}/object")
+    public ResponseEntity<PdObject> saveObject(@PathVariable String libName,
+        @RequestBody PdObject object, HttpServletRequest req) {
+        // only users can create new library
+        String userId = tokenService.extractUserId(req.getHeader("auth-token")); 
+        // if library is not unique, throw exception
+        User user = userService.getById(userId);
+        PdLibrary library = pdLibraryService.getByName(libName);
+        if(!pdLibraryService.isUniqueObjectName(object.getName(), library)) {
+            throw new ResourceConflictException("object already exists at path");
+        }
+        object.setLibrary(library);
+        return ResponseEntity.status(HttpStatus.OK).body(
+            pdLibraryService.saveObject(object, user));
+    }
 }

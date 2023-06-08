@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+//import com.fasterxml.jackson.annotation.JsonManagedReference;
 //import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -48,8 +48,7 @@ public class PdLibrary {
     private User lastEditedBy;
 
     @OneToMany(mappedBy = "library", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnoreProperties("{library, comments}")
-    @JsonManagedReference(value="library-objects")
+    @JsonIgnoreProperties({"library", "comments"})
     private Set<PdObject> objects;
     
     public PdLibrary (String name, User createdBy) {

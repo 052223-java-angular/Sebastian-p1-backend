@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.UUID;
 
 //import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.JsonBackReference;
+//import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -38,7 +38,7 @@ public class PdObject {
 
     @ManyToOne
     @JoinColumn(name = "library_id")
-    @JsonBackReference(value = "library-objects")
+    @JsonIgnoreProperties("objects")
     private PdLibrary library;
 
     private String author;
@@ -75,13 +75,11 @@ public class PdObject {
 
     public PdObject() {
         this.id = UUID.randomUUID().toString();
-        System.out.println("made no-constructor id: " + this.id);
         this.author = "";
         this.libraryVersion = "";
         this.description = "";
         this.comments = new HashSet<ObjectComment>();
         this.objectTags = new HashSet<ObjectTag>();
-        this.libraryVersion = "";
     }
 
 }
