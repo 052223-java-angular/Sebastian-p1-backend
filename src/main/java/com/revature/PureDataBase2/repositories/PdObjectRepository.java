@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import com.revature.PureDataBase2.entities.PdObject;
 import com.revature.PureDataBase2.entities.PdLibrary;
 
 /**
@@ -12,6 +13,7 @@ import com.revature.PureDataBase2.entities.PdLibrary;
  */
 
 @Repository
-public interface PdLibraryRepository extends JpaRepository<PdLibrary, String> {
-    Optional<PdLibrary> findByName(String name);
+public interface PdObjectRepository extends JpaRepository<PdObject, String> {
+
+    Optional<PdObject> findByNameAndLibrary(String name, PdLibrary library);
 }

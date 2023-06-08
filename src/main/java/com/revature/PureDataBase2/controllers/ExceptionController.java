@@ -8,8 +8,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
+import io.jsonwebtoken.JwtException;
 import com.revature.PureDataBase2.util.custom_exceptions.ResourceConflictException;
+import com.revature.PureDataBase2.util.custom_exceptions.ObjectNotFoundException;
+import com.revature.PureDataBase2.util.custom_exceptions.LibraryNotFoundException;
 import com.revature.PureDataBase2.util.custom_exceptions.RoleNotFoundException;
 import com.revature.PureDataBase2.util.custom_exceptions.UserNotFoundException;
 import com.revature.PureDataBase2.util.custom_exceptions.UnauthorizedException;
@@ -32,12 +34,36 @@ public class ExceptionController {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(map);
     }
 
+    @ExceptionHandler(ObjectNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleObjectNotFoundException(ObjectNotFoundException e) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("timestamp", new Date(System.currentTimeMillis()));
+        map.put("message", e.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(map);
+    }
+
+    @ExceptionHandler(LibraryNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleLibraryNotFoundException(LibraryNotFoundException e) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("timestamp", new Date(System.currentTimeMillis()));
+        map.put("message", e.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(map);
+    }
+
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleUserNotFoundException(UserNotFoundException e) {
         Map<String, Object> map = new HashMap<>();
         map.put("timestamp", new Date(System.currentTimeMillis()));
         map.put("message", e.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(map);
+    }
+ 
+    @ExceptionHandler(JwtException.class)
+    public ResponseEntity<Map<String, Object>> handleJWTException(JwtException e) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("timestamp", new Date(System.currentTimeMillis()));
+        map.put("message", e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map);
     }
 
     /**

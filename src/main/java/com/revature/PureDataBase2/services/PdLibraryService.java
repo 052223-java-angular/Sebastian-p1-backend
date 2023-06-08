@@ -6,9 +6,13 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.revature.PureDataBase2.repositories.PdLibraryRepository;
+import com.revature.PureDataBase2.repositories.PdObjectRepository;
 import com.revature.PureDataBase2.entities.User;
 import com.revature.PureDataBase2.entities.PdLibrary;
+import com.revature.PureDataBase2.entities.PdObject;
+import com.revature.PureDataBase2.DTO.requests.PdEditObject;
 import com.revature.PureDataBase2.util.custom_exceptions.LibraryNotFoundException;
+import com.revature.PureDataBase2.util.custom_exceptions.ObjectNotFoundException;
 
 import lombok.AllArgsConstructor;
 
@@ -19,6 +23,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class PdLibraryService {
     private final PdLibraryRepository libraryRepo;
+    private final PdObjectRepository objectRepo;
     // should I validate library name?
 
     public PdLibrary getByName(String name) {
@@ -28,8 +33,20 @@ public class PdLibraryService {
         return libOpt.get();
     }
 
+    public PdObject getObjectByNameAndLibrary(String name, PdLibrary library) {
+        Optional<PdObject> objOpt = objectRepo.findByNameAndLibrary(name, library);
+
+        if(objOpt.isEmpty()) throw new ObjectNotFoundException("object " + name + " not found in library" +
+            library.getName());
+        return objOpt.get();
+    }
+
     public boolean isUnique(String name) {
         return libraryRepo.findByName(name).isEmpty();
+    }
+
+    public boolean isUniqueObjectName(String name, PdLibrary library) {
+        return objectRepo.findByNameAndLibrary(name, library).isEmpty();
     }
 
     public PdLibrary update(PdLibrary library) {
@@ -38,6 +55,37 @@ public class PdLibraryService {
 
     public List<PdLibrary> getAll() {
         return libraryRepo.findAll();
+    }
+
+    public PdObject saveObject(PdObject object, User user) {
+        object.setLastEditedBy(user);
+
+        return objectRepo.save(object);
+    }
+
+    public PdObject updateObject(PdEditObject editObject, PdObject prevObject, User user,
+        PdLibrary library) {
+
+        //TODO merge tags if not null
+        String editString;
+        editString = editObject.getName();
+        if(editString != null) prevObject.setName(editString);
+        editString = editObject.getAuthor();
+        if(editString != null) prevObject.setAuthor(editString);
+        editString = editObject.getLibVersion();
+        if(editString != null) prevObject.setLibraryVersion(editString);
+        editString = editObject.getDescription();
+        if(editString != null) prevObject.setDescription(editString);
+        editString = editObject.getLibName();
+        if(editString != null)
+            if(!editString.equals(library.getName())) {
+                library = this.getByName(editString);
+                prevObject.setLibrary(library);
+                
+            }
+        prevObject.setLastEditedBy(user);
+
+        return objectRepo.save(prevObject);
     }
 
     public PdLibrary create(PdLibrary library, User user) {
