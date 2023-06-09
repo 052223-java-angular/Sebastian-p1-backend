@@ -10,9 +10,11 @@ import com.revature.PureDataBase2.repositories.PdObjectRepository;
 import com.revature.PureDataBase2.entities.User;
 import com.revature.PureDataBase2.entities.PdLibrary;
 import com.revature.PureDataBase2.entities.PdObject;
+//import com.revature.PureDataBase2.entities.Tag;
 import com.revature.PureDataBase2.DTO.requests.PdEditObject;
 import com.revature.PureDataBase2.util.custom_exceptions.LibraryNotFoundException;
 import com.revature.PureDataBase2.util.custom_exceptions.ObjectNotFoundException;
+import com.revature.PureDataBase2.util.custom_exceptions.ResourceConflictException;
 
 import lombok.AllArgsConstructor;
 
@@ -33,20 +35,24 @@ public class PdLibraryService {
         return libOpt.get();
     }
 
-    public PdObject getObjectByNameAndLibrary(String name, PdLibrary library) {
-        Optional<PdObject> objOpt = objectRepo.findByNameAndLibrary(name, library);
+    public PdObject getObjectByNameAndLibraryName(String name, String libName) {
+        Optional<PdObject> objOpt = objectRepo.findByNameAndLibraryName(name, libName);
 
         if(objOpt.isEmpty()) throw new ObjectNotFoundException("object " + name + " not found in library" +
-            library.getName());
+            libName);
         return objOpt.get();
+    }
+
+    public void deleteObjectByNameAndLibraryName(String name, String libName) {
+        objectRepo.deleteByNameAndLibraryName(name, libName);
     }
 
     public boolean isUnique(String name) {
         return libraryRepo.findByName(name).isEmpty();
     }
 
-    public boolean isUniqueObjectName(String name, PdLibrary library) {
-        return objectRepo.findByNameAndLibrary(name, library).isEmpty();
+    public boolean isUniqueObjectName(String name, String libName) {
+        return objectRepo.findByNameAndLibraryName(name, libName).isEmpty();
     }
 
     public PdLibrary update(PdLibrary library) {
@@ -64,7 +70,8 @@ public class PdLibraryService {
     }
 
     public PdObject updateObject(PdEditObject editObject, PdObject prevObject, User user,
-        PdLibrary library) {
+        String libName) {
+        PdLibrary library;
 
         //TODO merge tags if not null
         String editString;
@@ -78,10 +85,12 @@ public class PdLibraryService {
         if(editString != null) prevObject.setDescription(editString);
         editString = editObject.getLibName();
         if(editString != null)
-            if(!editString.equals(library.getName())) {
+            if(!editString.equals(libName)) {
                 library = this.getByName(editString);
-                prevObject.setLibrary(library);
-                
+                if(isUniqueObjectName(prevObject.getName(), editString))
+                    prevObject.setLibrary(library);
+                else throw new ResourceConflictException("object " + prevObject.getName() +
+                    " already exists in library " + editString);
             }
         prevObject.setLastEditedBy(user);
 
@@ -94,5 +103,9 @@ public class PdLibraryService {
 
         // save and return library
         return libraryRepo.save(library);
+    }
+
+    public List<PdObject> getObjectsByTagName(String tagName) {
+        return objectRepo.findAllByObjectTagsTagName(tagName);
     }
 }
