@@ -13,6 +13,4 @@ import lombok.Setter;
 public class ObjAddress {
     private String libraryName;
     private String objectName;
-
-    private boolean present = true;
 }
