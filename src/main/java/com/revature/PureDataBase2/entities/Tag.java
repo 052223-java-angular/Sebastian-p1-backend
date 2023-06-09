@@ -2,12 +2,9 @@ package com.revature.PureDataBase2.entities;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
@@ -26,10 +23,6 @@ import lombok.Setter;
 @Table(name = "tags")
 public class Tag {
     @Id
-    @JsonIgnore
-    private String id;
-
-    @Column(nullable = false)
     private String name;
 
     @OneToMany(mappedBy = "tag", fetch = FetchType.LAZY)
@@ -37,7 +30,6 @@ public class Tag {
     private Set<ObjectTag> objectTags;
 
     public Tag(String name) {
-        this.id = UUID.randomUUID().toString();
         this.name = name;
         this.objectTags = new HashSet<ObjectTag>();
     }

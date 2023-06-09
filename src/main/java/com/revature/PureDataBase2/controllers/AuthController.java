@@ -14,7 +14,7 @@ import com.revature.PureDataBase2.DTO.responses.Principal;
 import com.revature.PureDataBase2.services.UserService;
 import com.revature.PureDataBase2.services.JWTService;
 import com.revature.PureDataBase2.util.custom_exceptions.ResourceConflictException;
-import com.revature.PureDataBase2.util.custom_exceptions.UnauthorizedException;
+import com.revature.PureDataBase2.util.custom_exceptions.InvalidFormatException;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
@@ -40,7 +40,7 @@ public class AuthController {
     public ResponseEntity<Principal> registerUser(@RequestBody NewUserRequest req) {
         // if username is not valid, throw exception
         if (!userService.isValidUsername(req.getUsername())) {
-            throw new ResourceConflictException(
+            throw new InvalidFormatException(
                     "Username needs to be 8-20 characters long and can only contain letters, numbers, periods, and underscores");
         }
 
@@ -51,7 +51,7 @@ public class AuthController {
 
         // if password is not valid, throw exception
         if (!userService.isValidPassword(req.getPassword())) {
-            throw new ResourceConflictException(
+            throw new InvalidFormatException(
                     "Password needs to be at least 8 characters long and contain at least one letter and one number");
         }
 

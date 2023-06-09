@@ -1,11 +1,13 @@
 package com.revature.PureDataBase2.repositories;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import com.revature.PureDataBase2.entities.Tag;
 import com.revature.PureDataBase2.entities.PdObject;
 
 /**
@@ -13,8 +15,8 @@ import com.revature.PureDataBase2.entities.PdObject;
  */
 
 @Repository
-public interface PdObjectRepository extends JpaRepository<PdObject, String> {
-    void deleteByNameAndLibraryName(String name, String libName);
-    Optional<PdObject> findByNameAndLibraryName(String name, String libName);
-    List<PdObject> findAllByObjectTagsTagName(String tagName);
+public interface TagRepository extends JpaRepository<Tag, String> {
+    Optional<Tag> findByName(String name);
+    List<Tag> findByNameInOrderByName(Set<String> names);
+    List<Tag> findByObjectTagsObject(PdObject object);
 }

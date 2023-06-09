@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -28,7 +29,7 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/library")
+@RequestMapping("/libraries")
 public class PdLibraryController {
     // dependency injection ie. services
     private final JWTService tokenService;
@@ -53,7 +54,7 @@ public class PdLibraryController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<List<PdLibrary>> getAllLibraries() {
         // return all libraries
         return ResponseEntity.status(HttpStatus.OK).body(pdLibraryService.getAll());
@@ -67,9 +68,8 @@ public class PdLibraryController {
     @GetMapping("/{libName}/{objectName}")
     public ResponseEntity<PdObject> getObjectByLibrary(@PathVariable String libName,
         @PathVariable String objectName) {
-        PdLibrary library = pdLibraryService.getByName(libName);
         return ResponseEntity.status(HttpStatus.OK).body(
-            pdLibraryService.getObjectByNameAndLibrary(objectName, library));
+            pdLibraryService.getObjectByNameAndLibraryName(objectName, libName));
     }
 
     @PostMapping("/{libName}")
@@ -80,24 +80,37 @@ public class PdLibraryController {
         // if library is not unique, throw exception
         User user = userService.getById(userId);
         PdLibrary library = pdLibraryService.getByName(libName);
-        if(!pdLibraryService.isUniqueObjectName(object.getName(), library)) {
+        if(!pdLibraryService.isUniqueObjectName(object.getName(), libName)) {
             throw new ResourceConflictException("object already exists at path");
         }
         object.setLibrary(library);
         pdLibraryService.saveObject(object, user);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
     @PatchMapping("/{libName}/{oldName}")
     public ResponseEntity<?> updateObject(@PathVariable String libName, @PathVariable String oldName,
         @RequestBody PdEditObject editObject, HttpServletRequest req) {
-        PdLibrary library = pdLibraryService.getByName(libName);
 
-        PdObject prevObject = pdLibraryService.getObjectByNameAndLibrary(oldName, library);
         // only users can create new library
         String userId = tokenService.extractUserId(req.getHeader("auth-token")); 
         User user = userService.getById(userId);
 
-        pdLibraryService.updateObject(editObject, prevObject, user, library);
+        PdObject prevObject = pdLibraryService.getObjectByNameAndLibraryName(oldName, libName);
+
+        pdLibraryService.updateObject(editObject, prevObject, user, libName);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @DeleteMapping("/{libName}/{objectName}")
+    public ResponseEntity<?> deleteObject(@PathVariable String libName, @PathVariable String objectName,
+        HttpServletRequest req) {
+
+        // only users can delete library
+        tokenService.extractUserId(req.getHeader("auth-token")); 
+
+        pdLibraryService.deleteObjectByNameAndLibraryName(objectName, libName);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
