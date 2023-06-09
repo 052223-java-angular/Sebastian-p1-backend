@@ -17,6 +17,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.CascadeType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 //import lombok.NoArgsConstructor;
@@ -53,11 +54,11 @@ public class PdObject {
 
     private String description;
 
-    @OneToMany(mappedBy = "object", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "object", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties("object")
     private Set<ObjectComment> comments;
 
-    @OneToMany(mappedBy = "object", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "object", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties("object")
     private Set<ObjectTag> objectTags;
 

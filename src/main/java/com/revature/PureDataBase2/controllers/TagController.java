@@ -7,18 +7,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import com.revature.PureDataBase2.DTO.requests.ObjAddress;
 import com.revature.PureDataBase2.entities.PdObject;
 import com.revature.PureDataBase2.entities.Tag;
 import com.revature.PureDataBase2.services.JWTService;
 import com.revature.PureDataBase2.services.TagService;
-import com.revature.PureDataBase2.services.PdLibraryService;
 import com.revature.PureDataBase2.util.custom_exceptions.InvalidFormatException;
 import com.revature.PureDataBase2.util.custom_exceptions.ResourceConflictException;
 
@@ -33,7 +29,6 @@ public class TagController {
     // dependency injection ie. services
     private final JWTService tokenService;
     private final TagService tagService;
-    private final PdLibraryService pdLibraryService;
 
     @PostMapping("/{tagString}")
     public ResponseEntity<?> createTag(@PathVariable String tagString,
@@ -65,18 +60,8 @@ public class TagController {
 
     @GetMapping("{tagName}/objects")
     public ResponseEntity<List<PdObject>> getObjectsByTag(@PathVariable String tagName) {
-        List<PdObject> objects = pdLibraryService.getObjectsByTagName(tagName);
+        List<PdObject> objects = tagService.getObjectsByTagName(tagName);
         return ResponseEntity.status(HttpStatus.OK).body(objects);
-    }
-
-    @PutMapping("{tagName}")
-    public ResponseEntity<ObjAddress> editTagForObject(@PathVariable String tagName,
-        @RequestBody ObjAddress objAddress, HttpServletRequest req) {
-
-        // only users can associate a tag
-        tokenService.extractUserId(req.getHeader("auth-token")); 
-        tagService.editForObject(objAddress, tagName);
-        return ResponseEntity.status(HttpStatus.OK).body(objAddress);
     }
 
     /* edit/create */

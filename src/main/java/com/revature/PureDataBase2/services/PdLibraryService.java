@@ -1,16 +1,20 @@
 package com.revature.PureDataBase2.services;
 
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Set;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.revature.PureDataBase2.repositories.PdLibraryRepository;
 import com.revature.PureDataBase2.repositories.PdObjectRepository;
+import com.revature.PureDataBase2.repositories.ObjectTagRepository;
 import com.revature.PureDataBase2.entities.User;
 import com.revature.PureDataBase2.entities.PdLibrary;
 import com.revature.PureDataBase2.entities.PdObject;
-//import com.revature.PureDataBase2.entities.Tag;
+import com.revature.PureDataBase2.entities.ObjectTag;
+import com.revature.PureDataBase2.entities.Tag;
 import com.revature.PureDataBase2.DTO.requests.PdEditObject;
 import com.revature.PureDataBase2.util.custom_exceptions.LibraryNotFoundException;
 import com.revature.PureDataBase2.util.custom_exceptions.ObjectNotFoundException;
@@ -18,14 +22,12 @@ import com.revature.PureDataBase2.util.custom_exceptions.ResourceConflictExcepti
 
 import lombok.AllArgsConstructor;
 
-/**
- * The UserService class provides operations related to user management.
- */
 @Service
 @AllArgsConstructor
 public class PdLibraryService {
     private final PdLibraryRepository libraryRepo;
     private final PdObjectRepository objectRepo;
+    private final TagService tagService;
     // should I validate library name?
 
     public PdLibrary getByName(String name) {
@@ -68,12 +70,32 @@ public class PdLibraryService {
 
         return objectRepo.save(object);
     }
+    
+    // mutates existing
+    private final void mergeTags(Set<String> input, PdObject object) {
+        Set<ObjectTag> objectTags = object.getObjectTags();
+        List<Tag> remainderTags;
+        List<ObjectTag> remainderObjectTags = new ArrayList<ObjectTag>();
+        String name;
+        for(ObjectTag objectTag : objectTags) {
+            name = objectTag.getTag().getName();
+            if(!input.contains(name)) {
+                objectTags.remove(objectTag);
+            } else {
+                input.remove(name);
+            }
+        }
+        remainderTags = tagService.getByNames(input);
+        for(Tag remainderTag : remainderTags) {
+            remainderObjectTags.add(new ObjectTag(object, remainderTag));
+        }
+        objectTags.addAll(remainderObjectTags);
+    }
 
     public PdObject updateObject(PdEditObject editObject, PdObject prevObject, User user,
         String libName) {
         PdLibrary library;
 
-        //TODO merge tags if not null
         String editString;
         editString = editObject.getName();
         if(editString != null) prevObject.setName(editString);
@@ -92,6 +114,10 @@ public class PdLibraryService {
                 else throw new ResourceConflictException("object " + prevObject.getName() +
                     " already exists in library " + editString);
             }
+        Set<String> newTags = editObject.getObjectTags();
+        if(newTags != null) {
+            mergeTags(newTags, prevObject);
+        }
         prevObject.setLastEditedBy(user);
 
         return objectRepo.save(prevObject);
@@ -105,7 +131,4 @@ public class PdLibraryService {
         return libraryRepo.save(library);
     }
 
-    public List<PdObject> getObjectsByTagName(String tagName) {
-        return objectRepo.findAllByObjectTagsTagName(tagName);
-    }
 }
