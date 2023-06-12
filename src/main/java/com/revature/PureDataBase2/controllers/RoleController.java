@@ -1,12 +1,8 @@
 package com.revature.PureDataBase2.controllers;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.revature.PureDataBase2.DTO.requests.NewRoleRequest;
 import com.revature.PureDataBase2.services.RoleService;
 import com.revature.PureDataBase2.util.custom_exceptions.ResourceConflictException;
-import com.revature.PureDataBase2.util.custom_exceptions.RoleNotFoundException;
 
 import lombok.AllArgsConstructor;
 
