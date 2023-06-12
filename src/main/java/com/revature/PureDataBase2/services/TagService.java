@@ -25,9 +25,9 @@ public class TagService {
     // should I validate library name?
 
     public Tag getByName(String name) {
-        Optional<Tag> tagOpt = tagRepo.findByName(name);
+        Optional<Tag> tagOpt = tagRepo.findByNameIgnoreCase(name);
 
-        if(tagOpt.isEmpty()) throw new TagNotFoundException("no library found");
+        if(tagOpt.isEmpty()) throw new TagNotFoundException("no tag found");
         return tagOpt.get();
     }
 
@@ -37,6 +37,7 @@ public class TagService {
 
     public boolean isValidTag(String name) {
         char c;
+        if(name.length() == 0) return false;
         for(int i = 0; i < name.length(); i++) {
             c = name.charAt(i);
             if(c < 'a' || c > 'z')
@@ -46,7 +47,7 @@ public class TagService {
     }
 
     public boolean isUnique(String name) {
-        return tagRepo.findByName(name).isEmpty();
+        return tagRepo.findByNameIgnoreCase(name).isEmpty();
     }
 
     public List<Tag> getAll() {
@@ -59,6 +60,6 @@ public class TagService {
     }
 
     public List<PdObject> getObjectsByTagName(String tagName) {
-        return objectRepo.findAllByObjectTagsTagName(tagName);
+        return objectRepo.findAllByObjectTagsTagNameOrderByName(tagName);
     }
 }

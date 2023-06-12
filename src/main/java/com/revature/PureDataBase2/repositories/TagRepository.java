@@ -16,7 +16,7 @@ import com.revature.PureDataBase2.entities.PdObject;
 
 @Repository
 public interface TagRepository extends JpaRepository<Tag, String> {
-    Optional<Tag> findByName(String name);
+    Optional<Tag> findByNameIgnoreCase(String name);
     List<Tag> findByNameInOrderByName(Set<String> names);
     List<Tag> findByObjectTagsObject(PdObject object);
 }

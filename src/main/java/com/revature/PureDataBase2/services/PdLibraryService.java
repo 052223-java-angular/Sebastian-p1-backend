@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import com.revature.PureDataBase2.repositories.PdLibraryRepository;
 import com.revature.PureDataBase2.repositories.PdObjectRepository;
-import com.revature.PureDataBase2.repositories.ObjectTagRepository;
 import com.revature.PureDataBase2.entities.User;
 import com.revature.PureDataBase2.entities.PdLibrary;
 import com.revature.PureDataBase2.entities.PdObject;
@@ -29,6 +28,18 @@ public class PdLibraryService {
     private final PdObjectRepository objectRepo;
     private final TagService tagService;
     // should I validate library name?
+
+    public List<PdLibrary> getAuthorLibsByNameLike(String authorName) {
+        return libraryRepo.findByAuthorContainsIgnoreCase(authorName);
+    }
+
+    public List<PdLibrary> getByNameLike(String libName) {
+        return libraryRepo.findByNameContainsIgnoreCase(libName);
+    }
+
+    public List<PdObject> getObjectByNameLike(String objectName) {
+        return objectRepo.findByNameContainsIgnoreCaseOrderByName(objectName);
+    }
 
     public PdLibrary getByName(String name) {
         Optional<PdLibrary> libOpt = libraryRepo.findByName(name);

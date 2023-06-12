@@ -16,5 +16,6 @@ import com.revature.PureDataBase2.entities.PdObject;
 public interface PdObjectRepository extends JpaRepository<PdObject, String> {
     void deleteByNameAndLibraryName(String name, String libName);
     Optional<PdObject> findByNameAndLibraryName(String name, String libName);
-    List<PdObject> findAllByObjectTagsTagName(String tagName);
+    List<PdObject> findByNameContainsIgnoreCaseOrderByName(String name);
+    List<PdObject> findAllByObjectTagsTagNameOrderByName(String tagName);
 }
