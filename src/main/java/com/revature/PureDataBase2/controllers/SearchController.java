@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.revature.PureDataBase2.util.custom_exceptions.TagNotFoundException;
 
 import com.revature.PureDataBase2.entities.PdObject;
+import com.revature.PureDataBase2.entities.PdLibrary;
 import com.revature.PureDataBase2.services.TagService;
+import com.revature.PureDataBase2.services.LTagService;
 import com.revature.PureDataBase2.services.PdLibraryService;
 import com.revature.PureDataBase2.DTO.responses.SearchResults;
 
@@ -27,6 +29,7 @@ public class SearchController {
     // dependency injection ie. services
     private final PdLibraryService libraryService;
     private final TagService tagService;
+    private final LTagService lTagService;
 
     @GetMapping("/{term}")
     public ResponseEntity<SearchResults> getResults(@PathVariable String term,
@@ -35,12 +38,20 @@ public class SearchController {
         if(methods == null) methods = new ArrayList<String>();
         if(methods.size() == 0) methods.add("all");
         boolean all = methods.contains("all");
-        if(all || methods.contains("tag")) {
+        if(all || methods.contains("object_tag")) {
             try{
                 List<PdObject> tagObjs = tagService.getObjectsByTagName(term);
-                searchResults.setTagResults(tagObjs);
+                searchResults.setObjTagResults(tagObjs);
             } catch(TagNotFoundException e) {
-                searchResults.setTagResults(new ArrayList<PdObject>(0));
+                searchResults.setObjTagResults(new ArrayList<PdObject>(0));
+            }
+        }
+        if(all || methods.contains("library_tag")) {
+            try{
+                List<PdLibrary> tagLibs = lTagService.getLibrariesByTagName(term);
+                searchResults.setLibTagResults(tagLibs);
+            } catch(TagNotFoundException e) {
+                searchResults.setLibTagResults(new ArrayList<PdLibrary>(0));
             }
         }
         if(all || methods.contains("library")) {

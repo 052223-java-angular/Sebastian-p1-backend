@@ -1,11 +1,13 @@
 package com.revature.PureDataBase2.repositories;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import com.revature.PureDataBase2.entities.LTag;
 import com.revature.PureDataBase2.entities.PdLibrary;
 
 /**
@@ -13,9 +15,8 @@ import com.revature.PureDataBase2.entities.PdLibrary;
  */
 
 @Repository
-public interface PdLibraryRepository extends JpaRepository<PdLibrary, String> {
-    Optional<PdLibrary> findByName(String name);
-    List<PdLibrary> findByNameContainsIgnoreCase(String name);
-    List<PdLibrary> findByAuthorContainsIgnoreCase(String author);
-    List<PdLibrary> findAllByLibraryTagsTagNameOrderByName(String tagName);
+public interface LTagRepository extends JpaRepository<LTag, String> {
+    Optional<LTag> findByNameIgnoreCase(String name);
+    List<LTag> findByNameInOrderByName(Set<String> names);
+    List<LTag> findByLibraryTagsLibrary(PdLibrary object);
 }

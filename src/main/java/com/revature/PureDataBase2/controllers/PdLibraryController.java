@@ -22,6 +22,7 @@ import com.revature.PureDataBase2.services.PdLibraryService;
 //import com.revature.PureDataBase2.util.custom_exceptions.ObjectNotFoundException;
 import com.revature.PureDataBase2.util.custom_exceptions.ResourceConflictException;
 import com.revature.PureDataBase2.DTO.requests.PdEditObject;
+import com.revature.PureDataBase2.DTO.requests.PdEditLibrary;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -88,11 +89,26 @@ public class PdLibraryController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @PatchMapping("/{libName}")
+    public ResponseEntity<?> updateLibrary(@PathVariable String libName,
+        @RequestBody PdEditLibrary editLibrary, HttpServletRequest req) {
+
+        // only users can create new object
+        String userId = tokenService.extractUserId(req.getHeader("auth-token")); 
+        User user = userService.getById(userId);
+
+        PdLibrary prevLibrary = pdLibraryService.getByName(libName);
+
+        pdLibraryService.updateLibrary(editLibrary, prevLibrary, user);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
     @PatchMapping("/{libName}/{oldName}")
     public ResponseEntity<?> updateObject(@PathVariable String libName, @PathVariable String oldName,
         @RequestBody PdEditObject editObject, HttpServletRequest req) {
 
-        // only users can create new library
+        // only users can create new object
         String userId = tokenService.extractUserId(req.getHeader("auth-token")); 
         User user = userService.getById(userId);
 
