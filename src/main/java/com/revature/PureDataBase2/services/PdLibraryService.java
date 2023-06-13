@@ -13,8 +13,11 @@ import com.revature.PureDataBase2.entities.User;
 import com.revature.PureDataBase2.entities.PdLibrary;
 import com.revature.PureDataBase2.entities.PdObject;
 import com.revature.PureDataBase2.entities.ObjectTag;
+import com.revature.PureDataBase2.entities.LibraryTag;
 import com.revature.PureDataBase2.entities.Tag;
+import com.revature.PureDataBase2.entities.LTag;
 import com.revature.PureDataBase2.DTO.requests.PdEditObject;
+import com.revature.PureDataBase2.DTO.requests.PdEditLibrary;
 import com.revature.PureDataBase2.util.custom_exceptions.LibraryNotFoundException;
 import com.revature.PureDataBase2.util.custom_exceptions.ObjectNotFoundException;
 import com.revature.PureDataBase2.util.custom_exceptions.ResourceConflictException;
@@ -27,6 +30,7 @@ public class PdLibraryService {
     private final PdLibraryRepository libraryRepo;
     private final PdObjectRepository objectRepo;
     private final TagService tagService;
+    private final LTagService lTagService;
     // should I validate library name?
 
     public List<PdLibrary> getAuthorLibsByNameLike(String authorName) {
@@ -81,9 +85,56 @@ public class PdLibraryService {
 
         return objectRepo.save(object);
     }
-    
+
     // mutates existing
-    private final void mergeTags(Set<String> input, PdObject object) {
+    private final void mergeLibraryTags(Set<String> input, PdLibrary library) {
+        Set<LibraryTag> libraryTags = library.getLibraryTags();
+        List<LTag> remainderTags;
+        List<LibraryTag> remainderLibraryTags = new ArrayList<LibraryTag>();
+        String name;
+        for(LibraryTag libraryTag : libraryTags) {
+            name = libraryTag.getTag().getName();
+            if(!input.contains(name)) {
+                libraryTags.remove(libraryTag);
+            } else {
+                input.remove(name);
+            }
+        }
+        remainderTags = lTagService.getByNames(input);
+        for(LTag remainderTag : remainderTags) {
+            remainderLibraryTags.add(new LibraryTag(library, remainderTag));
+        }
+        libraryTags.addAll(remainderLibraryTags);
+    }
+
+    public PdLibrary updateLibrary(PdEditLibrary editLibrary, PdLibrary prevLibrary, User user) {
+
+        String editString = editLibrary.getName();
+        if(editString != null) {
+            if(!isUnique(editString))
+                throw new ResourceConflictException("library " + editString + " already exists");
+            prevLibrary.setName(editString);
+        }
+
+        editString = editLibrary.getAuthor();
+        if(editString != null) prevLibrary.setAuthor(editString);
+        editString = editLibrary.getLibVersion();
+        if(editString != null) prevLibrary.setRecentVersion(editString);
+        editString = editLibrary.getDescription();
+        if(editString != null) prevLibrary.setDescription(editString);
+
+        Set<String> newTags = editLibrary.getLibraryTags();
+        if(newTags != null) {
+            mergeLibraryTags(newTags, prevLibrary);
+        }
+        prevLibrary.setLastEditedBy(user);
+
+        return libraryRepo.save(prevLibrary);
+    }
+
+
+    // mutates existing
+    private final void mergeObjectTags(Set<String> input, PdObject object) {
         Set<ObjectTag> objectTags = object.getObjectTags();
         List<Tag> remainderTags;
         List<ObjectTag> remainderObjectTags = new ArrayList<ObjectTag>();
@@ -107,27 +158,33 @@ public class PdLibraryService {
         String libName) {
         PdLibrary library;
 
-        String editString;
-        editString = editObject.getName();
-        if(editString != null) prevObject.setName(editString);
+        String nameString = editObject.getName();
+        String editString = editObject.getLibName();
+        if(editString != null) {
+            if(nameString == null) nameString = prevObject.getName();
+            library = this.getByName(editString);
+            if(isUniqueObjectName(nameString, editString)) {
+                prevObject.setLibrary(library);
+                prevObject.setName(nameString);
+            } else throw new ResourceConflictException("object " + prevObject.getName() +
+                " already exists in library " + editString);
+        } else if(nameString != null) {
+            if(isUniqueObjectName(nameString, prevObject.getLibrary().getName())) {
+                prevObject.setName(nameString);
+            } else throw new ResourceConflictException("object " + prevObject.getName() +
+                " already exists in library " + editString);
+        }
+
         editString = editObject.getAuthor();
         if(editString != null) prevObject.setAuthor(editString);
         editString = editObject.getLibVersion();
         if(editString != null) prevObject.setLibraryVersion(editString);
         editString = editObject.getDescription();
         if(editString != null) prevObject.setDescription(editString);
-        editString = editObject.getLibName();
-        if(editString != null)
-            if(!editString.equals(libName)) {
-                library = this.getByName(editString);
-                if(isUniqueObjectName(prevObject.getName(), editString))
-                    prevObject.setLibrary(library);
-                else throw new ResourceConflictException("object " + prevObject.getName() +
-                    " already exists in library " + editString);
-            }
+
         Set<String> newTags = editObject.getObjectTags();
         if(newTags != null) {
-            mergeTags(newTags, prevObject);
+            mergeObjectTags(newTags, prevObject);
         }
         prevObject.setLastEditedBy(user);
 

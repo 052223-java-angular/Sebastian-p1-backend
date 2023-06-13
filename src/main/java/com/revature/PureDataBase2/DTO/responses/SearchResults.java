@@ -23,6 +23,7 @@ import lombok.Setter;
 public class SearchResults {
     List<PdLibrary> libraryResults;
     List<PdObject> objectResults;
-    List<PdObject> tagResults;
+    List<PdObject> objTagResults;
+    List<PdLibrary> libTagResults;
     List<PdLibrary> authorResults;
 }

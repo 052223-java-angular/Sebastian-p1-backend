@@ -52,6 +52,7 @@ public class PdObject {
     @JsonIgnore
     private User lastEditedBy;
 
+    @Column(columnDefinition = "text")
     private String description;
 
     @OneToMany(mappedBy = "object", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

@@ -1,4 +1,3 @@
-
 package com.revature.PureDataBase2.controllers;
 
 import java.util.List;
@@ -11,10 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import com.revature.PureDataBase2.entities.PdObject;
-import com.revature.PureDataBase2.entities.Tag;
+import com.revature.PureDataBase2.entities.PdLibrary;
+import com.revature.PureDataBase2.entities.LTag;
 import com.revature.PureDataBase2.services.JWTService;
-import com.revature.PureDataBase2.services.TagService;
+import com.revature.PureDataBase2.services.LTagService;
 import com.revature.PureDataBase2.util.custom_exceptions.InvalidFormatException;
 import com.revature.PureDataBase2.util.custom_exceptions.ResourceConflictException;
 
@@ -24,53 +23,44 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/object_tags")
-public class TagController {
+@RequestMapping("/library_tags")
+public class LTagController {
     // dependency injection ie. services
     private final JWTService tokenService;
-    private final TagService tagService;
+    private final LTagService lTagService;
 
-    @PostMapping("/{tagString}")
-    public ResponseEntity<?> createTag(@PathVariable String tagString,
+    @PostMapping("/{lTagString}")
+    public ResponseEntity<?> createTag(@PathVariable String lTagString,
             HttpServletRequest req) {
         // only users can create new library
         tokenService.extractUserId(req.getHeader("auth-token")); 
         // if library is not unique, throw exception
-        tagString = tagString.toLowerCase();
-        if (!tagService.isUnique(tagString)) {
+        lTagString = lTagString.toLowerCase();
+        if (!lTagService.isUnique(lTagString)) {
             throw new ResourceConflictException("Tag is not unique");
         }
-        if(!tagService.isValidTag(tagString))
+        if(!lTagService.isValidLTag(lTagString))
             throw new InvalidFormatException("tag can only contain letters and '-' (hyphen)");
-        Tag tag = new Tag(tagString);
-        tagService.create(tag);
+        LTag lTag = new LTag(lTagString);
+        lTagService.create(lTag);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping
-    public ResponseEntity<List<Tag>> getAllTags() {
+    public ResponseEntity<List<LTag>> getAllTags() {
         // return all libraries
-        return ResponseEntity.status(HttpStatus.OK).body(tagService.getAll());
+        return ResponseEntity.status(HttpStatus.OK).body(lTagService.getAll());
     }
 
-    @GetMapping("{tagName}")
-    public ResponseEntity<Tag> getTag(@PathVariable String tagName) {
-        return ResponseEntity.status(HttpStatus.OK).body(tagService.getByName(tagName));
+    @GetMapping("{lTagName}")
+    public ResponseEntity<LTag> getLTag(@PathVariable String lTagName) {
+        return ResponseEntity.status(HttpStatus.OK).body(lTagService.getByName(lTagName));
     }
 
-    @GetMapping("{tagName}/objects")
-    public ResponseEntity<List<PdObject>> getObjectsByTag(@PathVariable String tagName) {
-        List<PdObject> objects = tagService.getObjectsByTagName(tagName);
+    @GetMapping("{lTagName}/libraries")
+    public ResponseEntity<List<PdLibrary>> getObjectsByTag(@PathVariable String lTagName) {
+        List<PdLibrary> objects = lTagService.getLibrariesByTagName(lTagName);
         return ResponseEntity.status(HttpStatus.OK).body(objects);
     }
 
-    /* edit/create */
-    /* implement later if there's time
-    @PutMapping("{tagName}")
-    public ResponseEntity<List<ObjAddress>> addAssociations(@PathVariable String tagName,
-        add user validation here
-        @RequestBody List<ObjAddress> objs) {
-        objs = tagService.associateObjectTags(tagName, objs);
-        return ResponseEntity.status(HttpStatus.OK).body(objs);
-    }*/
 }

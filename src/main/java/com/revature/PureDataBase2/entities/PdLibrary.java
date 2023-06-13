@@ -39,6 +39,9 @@ public class PdLibrary {
 
     private String author;
 
+    @Column(columnDefinition = "text")
+    private String description;
+
     @Column(name = "recent_version")
     private String recentVersion;
 
@@ -51,20 +54,28 @@ public class PdLibrary {
     @JsonIgnoreProperties({"library", "comments"})
     private Set<PdObject> objects;
     
+    @OneToMany(mappedBy = "library", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("library")
+    private Set<LibraryTag> libraryTags;
+
     public PdLibrary (String name, User createdBy) {
         this.id = UUID.randomUUID().toString();
         this.name = name;
         this.author = "";
         this.recentVersion = "";
+        this.description = "";
         this.objects = new HashSet<PdObject>();
         this.lastEditedBy = createdBy;
+        this.libraryTags = new HashSet<LibraryTag>();
     }
 
     public PdLibrary () {
         this.id = UUID.randomUUID().toString();
         this.author = "";
+        this.description = "";
         this.recentVersion = "";
         this.objects = new HashSet<PdObject>();
+        this.libraryTags = new HashSet<LibraryTag>();
     }
 
 }
