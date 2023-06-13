@@ -14,6 +14,7 @@ import com.revature.PureDataBase2.util.custom_exceptions.ObjectNotFoundException
 import com.revature.PureDataBase2.util.custom_exceptions.TagNotFoundException;
 import com.revature.PureDataBase2.util.custom_exceptions.LibraryNotFoundException;
 import com.revature.PureDataBase2.util.custom_exceptions.RoleNotFoundException;
+import com.revature.PureDataBase2.util.custom_exceptions.CommentNotFoundException;
 import com.revature.PureDataBase2.util.custom_exceptions.UserNotFoundException;
 import com.revature.PureDataBase2.util.custom_exceptions.UnauthorizedException;
 import com.revature.PureDataBase2.util.custom_exceptions.InvalidFormatException;
@@ -34,6 +35,14 @@ public class ExceptionController {
         map.put("timestamp", new Date(System.currentTimeMillis()));
         map.put("message", e.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(map);
+    }
+
+    @ExceptionHandler(CommentNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleObjectNotFoundException(CommentNotFoundException e) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("timestamp", new Date(System.currentTimeMillis()));
+        map.put("message", e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
     }
 
     @ExceptionHandler(ObjectNotFoundException.class)
