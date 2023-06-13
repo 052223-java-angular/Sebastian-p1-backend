@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,11 +17,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import com.revature.PureDataBase2.entities.PdLibrary;
 import com.revature.PureDataBase2.entities.PdObject;
 import com.revature.PureDataBase2.entities.User;
+import com.revature.PureDataBase2.entities.ObjectComment;
 import com.revature.PureDataBase2.services.JWTService;
 import com.revature.PureDataBase2.services.UserService;
 import com.revature.PureDataBase2.services.PdLibraryService;
+import com.revature.PureDataBase2.services.CommentService;
 //import com.revature.PureDataBase2.util.custom_exceptions.ObjectNotFoundException;
 import com.revature.PureDataBase2.util.custom_exceptions.ResourceConflictException;
+import com.revature.PureDataBase2.util.custom_exceptions.UnauthorizedException;
 import com.revature.PureDataBase2.DTO.requests.PdEditObject;
 import com.revature.PureDataBase2.DTO.requests.PdEditLibrary;
 
@@ -35,6 +39,7 @@ public class PdLibraryController {
     // dependency injection ie. services
     private final JWTService tokenService;
     private final UserService userService;
+    private final CommentService commentService;
     private final PdLibraryService pdLibraryService;
 
     @PostMapping
@@ -128,6 +133,49 @@ public class PdLibraryController {
 
         pdLibraryService.deleteObjectByNameAndLibraryName(objectName, libName);
 
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+ 
+    @PostMapping("/{libName}/{objectName}/comment")
+    public ResponseEntity<String> postComment(@PathVariable String libName, @PathVariable String objectName,
+        HttpServletRequest req, @RequestBody String comment) {
+        PdObject object = pdLibraryService.getObjectByNameAndLibraryName(objectName, libName);
+
+        // only users can add comment
+        String userId = tokenService.extractUserId(req.getHeader("auth-token")); 
+        User user = userService.getById(userId);
+        String commentId = commentService.create(comment, object, user);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(commentId);
+    }
+
+    @PutMapping("/{libName}/{objectName}/comment/{id}")
+    public ResponseEntity<?> editComment(@PathVariable String libName, @PathVariable String objectName,
+        @PathVariable String id, HttpServletRequest req, @RequestBody String editComment) {
+
+        // only users can add comment
+        String userId = tokenService.extractUserId(req.getHeader("auth-token")); 
+        ObjectComment prevComment = commentService.getById(id);
+        if(!prevComment.getUser().getId().equals(userId))
+            throw new UnauthorizedException("unable to update comment: unauthorized");
+
+        prevComment.setComment(editComment);
+        commentService.update(prevComment);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @DeleteMapping("/{libName}/{objectName}/comment/{id}")
+    public ResponseEntity<?> deleteComment(@PathVariable String libName, @PathVariable String objectName,
+        @PathVariable String id, HttpServletRequest req) {
+
+        // only users can add comment
+        String userId = tokenService.extractUserId(req.getHeader("auth-token")); 
+        ObjectComment prevComment = commentService.getById(id);
+        if(!prevComment.getUser().getId().equals(userId))
+            throw new UnauthorizedException("unable to delete comment: unauthorized");
+
+        commentService.delete(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
