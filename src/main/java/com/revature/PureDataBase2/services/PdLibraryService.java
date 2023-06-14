@@ -33,8 +33,24 @@ public class PdLibraryService {
     private final LTagService lTagService;
     // should I validate library name?
 
+    public PdObject getObjectByObjectId(String objectId) {
+        Optional<PdObject> optObj = objectRepo.findById(objectId);
+        if(optObj.isEmpty()) throw new ObjectNotFoundException("object not found for Id " + objectId);
+        return optObj.get();
+    }
+
+    public PdLibrary getById(String libraryId) {
+        Optional<PdLibrary> optLib = libraryRepo.findById(libraryId);
+        if(optLib.isEmpty()) throw new ObjectNotFoundException("library not found for Id " + libraryId);
+        return optLib.get();
+    }
+
     public List<PdLibrary> getAuthorLibsByNameLike(String authorName) {
         return libraryRepo.findByAuthorContainsIgnoreCase(authorName);
+    }
+
+    public List<PdObject> getAuthorObjsByNameLike(String authorName) {
+        return objectRepo.findByAuthorContainsIgnoreCase(authorName);
     }
 
     public List<PdLibrary> getByNameLike(String libName) {
@@ -55,7 +71,7 @@ public class PdLibraryService {
     public PdObject getObjectByNameAndLibraryName(String name, String libName) {
         Optional<PdObject> objOpt = objectRepo.findByNameAndLibraryName(name, libName);
 
-        if(objOpt.isEmpty()) throw new ObjectNotFoundException("object " + name + " not found in library" +
+        if(objOpt.isEmpty()) throw new ObjectNotFoundException("object " + name + " not found in library " +
             libName);
         return objOpt.get();
     }

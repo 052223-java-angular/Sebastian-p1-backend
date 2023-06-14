@@ -31,7 +31,6 @@ import lombok.Setter;
 @Table(name = "libraries")
 public class PdLibrary {
     @Id
-    @JsonIgnore
     private String id;
 
     @Column(nullable = false)

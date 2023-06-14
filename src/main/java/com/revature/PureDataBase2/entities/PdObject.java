@@ -31,7 +31,6 @@ import lombok.Setter;
 @Table(name = "objects")
 public class PdObject {
     @Id
-    @JsonIgnore
     private String id;
 
     @Column(nullable = false)

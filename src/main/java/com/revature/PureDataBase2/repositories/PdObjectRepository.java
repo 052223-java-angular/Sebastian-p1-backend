@@ -18,4 +18,5 @@ public interface PdObjectRepository extends JpaRepository<PdObject, String> {
     Optional<PdObject> findByNameAndLibraryName(String name, String libName);
     List<PdObject> findByNameContainsIgnoreCaseOrderByName(String name);
     List<PdObject> findAllByObjectTagsTagNameOrderByName(String tagName);
+    List<PdObject> findByAuthorContainsIgnoreCase(String authorName);
 }
