@@ -8,6 +8,7 @@ import java.util.UUID;
 //import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -31,6 +32,7 @@ import lombok.Setter;
 @Table(name = "objects")
 public class PdObject {
     @Id
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String id;
 
     @Column(nullable = false)
