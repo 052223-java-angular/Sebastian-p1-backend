@@ -18,4 +18,5 @@ public interface LikeRepository extends JpaRepository<Like, String> {
     List<Like> findByEntityTypeAndEntityIdOrderByTimeDesc(Like.EntityType type, String dateId);
     Optional<Like> findByEntityIdAndUserId(String entityId, String userId);
     List<Like> findByUserIdOrderByTimeDesc(String userId);
+    void deleteByEntityIdAndUserId(String entityId, String userId);
 }

@@ -35,13 +35,13 @@ public class PdLibraryService {
 
     public PdObject getObjectByObjectId(String objectId) {
         Optional<PdObject> optObj = objectRepo.findById(objectId);
-        if(optObj.isEmpty()) throw new ObjectNotFoundException("library not found for Id " + objectId);
+        if(optObj.isEmpty()) throw new ObjectNotFoundException("object not found for Id " + objectId);
         return optObj.get();
     }
 
     public PdLibrary getById(String libraryId) {
         Optional<PdLibrary> optLib = libraryRepo.findById(libraryId);
-        if(optLib.isEmpty()) throw new LibraryNotFoundException("library not found for Id " + libraryId);
+        if(optLib.isEmpty()) throw new ObjectNotFoundException("library not found for Id " + libraryId);
         return optLib.get();
     }
 

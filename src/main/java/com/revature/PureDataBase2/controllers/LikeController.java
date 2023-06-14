@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,7 +45,6 @@ public class LikeController {
         List<LikeResult> resultList = new ArrayList<LikeResult>();
         PdLibrary library;
         PdObject object;
-        System.out.println("likelist size: " + Integer.toString(likeList.size()));
         for (Like like : likeList) {
             switch(like.getEntityType()) {
                 case LIBRARY:
@@ -53,7 +53,6 @@ public class LikeController {
                     break;
                 case OBJECT:
                     object = libraryService.getObjectByObjectId(like.getEntityId());
-                    System.out.println("object " + object.getName() + " in likelist");
                     resultList.add(new LikeResult("object",
                         object.getLibrary().getName() + '/' + object.getName()));
                     break;
@@ -81,7 +80,7 @@ public class LikeController {
     }
 
     @PostMapping("/library/{libraryName}")
-    public ResponseEntity<?> createLibraryLike(@PathVariable String libraryName, @PathVariable String objectName,
+    public ResponseEntity<?> createLibraryLike(@PathVariable String libraryName,
             HttpServletRequest req) {
         // only users can like
         String userId = tokenService.extractUserId(req.getHeader("auth-token")); 
@@ -89,21 +88,7 @@ public class LikeController {
         String libraryId = libraryService.getByName(libraryName).getId();
         if(likeService.hasUserLikedEntity(libraryId, userId))
             throw new ResourceConflictException("already liked " + libraryName);
-        Like like = new Like(Like.EntityType.OBJECT, libraryId, user);
-        likeService.create(like);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
-
-    @GetMapping("/author/{authorName}")
-    public ResponseEntity<?> getByAuthor(@PathVariable String authorName, HttpServletRequest req) {
-        // only users can like
-        // just use author name as id
-        authorName = authorName.replace("%20", " ");
-        String userId = tokenService.extractUserId(req.getHeader("auth-token")); 
-        User user = userService.getById(userId);
-        if(likeService.hasUserLikedEntity(authorName, userId))
-            throw new ResourceConflictException("already liked " + authorName);
-        Like like = new Like(Like.EntityType.OBJECT, authorName, user);
+        Like like = new Like(Like.EntityType.LIBRARY, libraryId, user);
         likeService.create(like);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -113,12 +98,50 @@ public class LikeController {
         // only users can like
         // just use author name as id
         authorName = authorName.replace("%20", " ");
+        authorName = authorName.replace('+', ' ');
         String userId = tokenService.extractUserId(req.getHeader("auth-token")); 
         User user = userService.getById(userId);
         if(likeService.hasUserLikedEntity(authorName, userId))
             throw new ResourceConflictException("already liked " + authorName);
-        Like like = new Like(Like.EntityType.OBJECT, authorName, user);
+        Like like = new Like(Like.EntityType.AUTHOR, authorName, user);
         likeService.create(like);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @DeleteMapping("/object/{libraryName}/{objectName}")
+    public ResponseEntity<?> deleteObject(@PathVariable String libraryName, @PathVariable String objectName,
+            HttpServletRequest req) {
+        // only users can like
+        String userId = tokenService.extractUserId(req.getHeader("auth-token")); 
+        String objectId = libraryService.getObjectByNameAndLibraryName(objectName, libraryName).getId();
+        if(!likeService.hasUserLikedEntity(objectId, userId))
+            throw new ResourceConflictException(libraryName + '/' + objectName + " isn't liked");
+        likeService.deleteByEntityId(objectId, userId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @DeleteMapping("/library/{libraryName}")
+    public ResponseEntity<?> deleteLibraryLike(@PathVariable String libraryName,
+            HttpServletRequest req) {
+        // only users can like
+        String userId = tokenService.extractUserId(req.getHeader("auth-token")); 
+        String libraryId = libraryService.getByName(libraryName).getId();
+        if(likeService.hasUserLikedEntity(libraryId, userId))
+            throw new ResourceConflictException(libraryName + " isn't liked");
+        likeService.deleteByEntityId(libraryId, userId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @DeleteMapping("/author/{authorName}")
+    public ResponseEntity<?> deleteAuthorLike(@PathVariable String authorName, HttpServletRequest req) {
+        // only users can like
+        // just use author name as id
+        authorName = authorName.replace("%20", " ");
+        authorName = authorName.replace('+', ' ');
+        String userId = tokenService.extractUserId(req.getHeader("auth-token")); 
+        if(likeService.hasUserLikedEntity(authorName, userId))
+            throw new ResourceConflictException(authorName + " isn't liked");
+        likeService.deleteByEntityId(authorName, userId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

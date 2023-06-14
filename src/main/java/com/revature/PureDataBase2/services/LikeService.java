@@ -56,4 +56,8 @@ public class LikeService {
         return likeRepo.save(like);
     }
 
+    public void deleteByEntityId(String entityId, String userId) {
+        likeRepo.deleteByEntityIdAndUserId(entityId, userId);
+    }
+
 }
