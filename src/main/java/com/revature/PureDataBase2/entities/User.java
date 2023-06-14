@@ -73,6 +73,6 @@ public class User {
         this.lastEditedByObjects = new HashSet<PdObject>();
         this.role = role;
         this.email = "";
-        this.historyItems = new TreeSet<HistoryItem>();
+        this.likes = new TreeSet<Like>();
     }
 }

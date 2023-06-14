@@ -86,10 +86,12 @@ public class RecommendationService {
             Collections.shuffle(tagBase.tags);
             likeList.add(tagBase);
         }
+        if(likeList.isEmpty()) return ret;
         int likeIdx = 0;
         int exhaustIdx = -1;
         // loop through likes
         while(ret.size() < 5 && (exhaustIdx != likeIdx)) {
+            System.out.println("recService (object) likeIdx: " + Integer.toString(likeIdx));
             TagBase currentBase = likeList.get(likeIdx);
             if(!currentBase.stopped) {
                 // loop through tags

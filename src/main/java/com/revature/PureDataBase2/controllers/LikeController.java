@@ -44,6 +44,7 @@ public class LikeController {
         List<LikeResult> resultList = new ArrayList<LikeResult>();
         PdLibrary library;
         PdObject object;
+        System.out.println("likelist size: " + Integer.toString(likeList.size()));
         for (Like like : likeList) {
             switch(like.getEntityType()) {
                 case LIBRARY:
@@ -52,6 +53,7 @@ public class LikeController {
                     break;
                 case OBJECT:
                     object = libraryService.getObjectByObjectId(like.getEntityId());
+                    System.out.println("object " + object.getName() + " in likelist");
                     resultList.add(new LikeResult("object",
                         object.getLibrary().getName() + '/' + object.getName()));
                     break;

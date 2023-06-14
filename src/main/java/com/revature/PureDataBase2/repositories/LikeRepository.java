@@ -14,8 +14,8 @@ import com.revature.PureDataBase2.entities.Like;
 
 @Repository
 public interface LikeRepository extends JpaRepository<Like, String> {
-    List<Like> findByEntityTypeAndUserIdOrderByDateDesc(Like.EntityType type, String userId);
-    List<Like> findByEntityTypeAndEntityIdOrderByDateDesc(Like.EntityType type, String dateId);
+    List<Like> findByEntityTypeAndUserIdOrderByTimeDesc(Like.EntityType type, String userId);
+    List<Like> findByEntityTypeAndEntityIdOrderByTimeDesc(Like.EntityType type, String dateId);
     Optional<Like> findByEntityIdAndUserId(String entityId, String userId);
-    List<Like> findByUserIdOrderByDateDesc(String userId);
+    List<Like> findByUserIdOrderByTimeDesc(String userId);
 }

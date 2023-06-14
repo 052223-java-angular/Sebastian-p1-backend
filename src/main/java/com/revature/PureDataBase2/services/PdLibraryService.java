@@ -71,7 +71,7 @@ public class PdLibraryService {
     public PdObject getObjectByNameAndLibraryName(String name, String libName) {
         Optional<PdObject> objOpt = objectRepo.findByNameAndLibraryName(name, libName);
 
-        if(objOpt.isEmpty()) throw new ObjectNotFoundException("object " + name + " not found in library" +
+        if(objOpt.isEmpty()) throw new ObjectNotFoundException("object " + name + " not found in library " +
             libName);
         return objOpt.get();
     }
