@@ -25,9 +25,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "history")
-public class HistoryItem implements Comparable<HistoryItem> {
-    public enum EntityType {OBJECT, LIBRARY}
+@Table(name = "likes")
+public class Like implements Comparable<Like> {
+    public enum EntityType {OBJECT, LIBRARY, AUTHOR}
 
     @Id
     @JsonIgnore
@@ -45,16 +45,16 @@ public class HistoryItem implements Comparable<HistoryItem> {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @JsonIgnoreProperties("historyItems")
+    @JsonIgnoreProperties("likes")
     private User user;
 
     // must be comparable for user history treeset
 
-    public int compareTo(HistoryItem compared) {
+    public int compareTo(Like compared) {
         return this.time.compareTo(compared.getTime());
     }
 
-    public HistoryItem(EntityType entityType, String entityId, User user) {
+    public Like(EntityType entityType, String entityId, User user) {
         this.id = UUID.randomUUID().toString();
         this.time = new Date();
         this.entityType = entityType;

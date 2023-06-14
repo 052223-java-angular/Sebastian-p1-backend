@@ -62,7 +62,7 @@ public class User {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @JsonIgnore
-    private Set<HistoryItem> historyItems;
+    private Set<Like> likes;
 
     public User(String username, String password, Role role) {
         this.id = UUID.randomUUID().toString();
