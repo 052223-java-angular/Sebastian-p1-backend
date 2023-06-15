@@ -1,12 +1,12 @@
 package com.revature.PureDataBase2.services;
 
+import org.springframework.beans.factory.annotation.Value;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import java.io.InputStream;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.io.BufferedInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -31,10 +31,18 @@ import lombok.AllArgsConstructor;
  * The UserService class provides operations related to user management.
  */
 @Service
-@AllArgsConstructor
 public class UserService {
     private final RoleService roleService;
     private final UserRepository userRepo;
+    private final String STATIC_PATH;
+
+    public UserService(RoleService roleService, UserRepository userRepository,
+        @Value(value = "${puredatabase2.staticLocation}") String STATIC_PATH) {
+            this.roleService = roleService;
+            this.userRepo = userRepository;
+            this.STATIC_PATH = STATIC_PATH;
+    }
+
     public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
         Pattern.compile("^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9]" + 
             "(?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$");
@@ -133,7 +141,7 @@ public class UserService {
         try (
             InputStream inputStream = new BufferedInputStream(image.getInputStream());
             FileOutputStream outputStream =
-                new FileOutputStream("src/main/resources/public/profile_pics/" + user.getId() + ".jpg");
+                new FileOutputStream(STATIC_PATH + "profile_pics/" + user.getId() + ".jpg");
         ) {
             BufferedImage bufImage = ImageIO.read(inputStream);
             int width = bufImage.getWidth();
