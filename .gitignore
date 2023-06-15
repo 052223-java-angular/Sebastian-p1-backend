@@ -43,3 +43,5 @@ target/
 ### Logs ###
 *.log
 *.gz
+
+src/main/resources/public

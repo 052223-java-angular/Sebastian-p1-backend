@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -18,6 +19,7 @@ import com.revature.PureDataBase2.util.custom_exceptions.CommentNotFoundExceptio
 import com.revature.PureDataBase2.util.custom_exceptions.UserNotFoundException;
 import com.revature.PureDataBase2.util.custom_exceptions.UnauthorizedException;
 import com.revature.PureDataBase2.util.custom_exceptions.InvalidFormatException;
+import com.revature.PureDataBase2.util.custom_exceptions.WriteException;
 
 @RestControllerAdvice
 public class ExceptionController {
@@ -37,6 +39,14 @@ public class ExceptionController {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(map);
     }
 
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<Map<String, Object>> handleResourceConflictException(MaxUploadSizeExceededException e) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("timestamp", new Date(System.currentTimeMillis()));
+        map.put("message", e.getMessage());
+        return ResponseEntity.status(413).body(map);
+    }
+
     @ExceptionHandler(CommentNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleObjectNotFoundException(CommentNotFoundException e) {
         Map<String, Object> map = new HashMap<>();
@@ -51,6 +61,14 @@ public class ExceptionController {
         map.put("timestamp", new Date(System.currentTimeMillis()));
         map.put("message", e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
+    }
+
+    @ExceptionHandler(WriteException.class)
+    public ResponseEntity<Map<String, Object>> handleLibraryNotFoundException(WriteException e) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("timestamp", new Date(System.currentTimeMillis()));
+        map.put("message", e.getMessage());
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(map);
     }
 
     @ExceptionHandler(LibraryNotFoundException.class)

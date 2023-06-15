@@ -1,9 +1,19 @@
 package com.revature.PureDataBase2.services;
 
 import java.util.Optional;
+import java.util.regex.Pattern;
+import java.io.InputStream;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.io.BufferedInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.revature.PureDataBase2.DTO.requests.NewUserRequest;
 import com.revature.PureDataBase2.DTO.requests.NewLoginRequest;
@@ -13,6 +23,7 @@ import com.revature.PureDataBase2.entities.User;
 import com.revature.PureDataBase2.repositories.UserRepository;
 
 import com.revature.PureDataBase2.util.custom_exceptions.UserNotFoundException;
+import com.revature.PureDataBase2.util.custom_exceptions.WriteException;
 
 import lombok.AllArgsConstructor;
 
@@ -24,6 +35,9 @@ import lombok.AllArgsConstructor;
 public class UserService {
     private final RoleService roleService;
     private final UserRepository userRepo;
+    public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
+        Pattern.compile("^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9]" + 
+            "(?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$");
 
     public User getById(String id) {
         Optional<User> userOpt = userRepo.findById(id);
@@ -105,5 +119,38 @@ public class UserService {
      */
     public boolean isSamePassword(String password, String confirmPassword) {
         return password.equals(confirmPassword);
+    }
+
+    public boolean isValidEmail(String email) {
+        return VALID_EMAIL_ADDRESS_REGEX.matcher(email).matches();
+    }
+
+    public void save(User user) {
+        userRepo.save(user);
+    }
+
+    public void writeProfilePic(MultipartFile image, User user) {
+        try (
+            InputStream inputStream = new BufferedInputStream(image.getInputStream());
+            FileOutputStream outputStream =
+                new FileOutputStream("src/main/resources/public/profile_pics/" + user.getId() + ".jpg");
+        ) {
+            BufferedImage bufImage = ImageIO.read(inputStream);
+            int width = bufImage.getWidth();
+            int height = bufImage.getHeight();
+            if(height > width) {
+                bufImage = bufImage.getSubimage(0, 0, width, width);
+            } else {
+                int x = (width - height)/2;
+                bufImage = bufImage.getSubimage(x, 0, height, height);
+            }
+            BufferedImage editImage = new BufferedImage(200, 200, BufferedImage.TYPE_INT_RGB);
+            Graphics2D graphics2D = editImage.createGraphics();
+            graphics2D.drawImage(bufImage, 0, 0, 200, 200, null);
+            graphics2D.dispose();
+            ImageIO.write(editImage, "jpeg", outputStream);
+        } catch(IOException e) {
+            throw new WriteException("unable to read/save profile picture: " + e);
+        }
     }
 }
