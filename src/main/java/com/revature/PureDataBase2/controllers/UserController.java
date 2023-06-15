@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,6 +16,7 @@ import com.revature.PureDataBase2.services.UserService;
 import com.revature.PureDataBase2.services.JWTService;
 import com.revature.PureDataBase2.util.custom_exceptions.ResourceConflictException;
 import com.revature.PureDataBase2.util.custom_exceptions.InvalidFormatException;
+import com.revature.PureDataBase2.DTO.requests.EditUserRequest;
 
 import lombok.AllArgsConstructor;
 
@@ -36,13 +38,15 @@ public class UserController {
      * @return ResponseEntity with the HTTP status indicating the success or failure
      *         of the role creation
      */
-    @PutMapping(value = "/edit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> updateUser(@RequestParam(defaultValue = "") String email,
-        @RequestParam(defaultValue = "", name = "username") String newUsername,
+    @PutMapping(value = "/edit")
+    public ResponseEntity<?> updateUser(@RequestParam(required = false) String email,
+        @RequestParam(name = "username", required = false) String newUsername,
         @RequestParam(required = false) MultipartFile image,
         HttpServletRequest req) {
         String userId = tokenService.extractUserId(req.getHeader("auth-token")); 
         User user = userService.getById(userId);
+        if(newUsername == null) newUsername = "";
+        if(email == null) email = "";
         if(!newUsername.isEmpty()) {
             if(!userService.isUniqueUsername(newUsername)) {
                 throw new ResourceConflictException("username already exists");
