@@ -38,7 +38,7 @@ public class User {
     private String username;
 
     @Column(nullable = false)
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JsonIgnore
     private String password;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
@@ -56,6 +56,7 @@ public class User {
     @ManyToOne
     @JoinColumn(nullable = false, name = "role_id")
     @JsonBackReference(value="user-role")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Role role;
 
     private String email;
