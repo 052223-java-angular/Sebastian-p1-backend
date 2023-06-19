@@ -48,11 +48,11 @@ public class PdLibrary {
 
     @ManyToOne
     @JoinColumn(name = "last_edited_by")
-    @JsonIgnore
+    @JsonIgnoreProperties({"objectComments", "role", "likes", "email"})
     private User lastEditedBy;
 
     @OneToMany(mappedBy = "library", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnoreProperties({"library", "comments"})
+    @JsonIgnoreProperties({"library", "comments", "helpText"})
     private Set<PdObject> objects;
     
     @OneToMany(mappedBy = "library", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

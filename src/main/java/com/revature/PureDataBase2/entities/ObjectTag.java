@@ -28,7 +28,7 @@ public class ObjectTag {
 
     @ManyToOne
     @JoinColumn(name = "object_id")
-    @JsonIgnoreProperties("objectTags")
+    @JsonIgnoreProperties({"objectTags", "helpText"})
     private PdObject object;
 
     @ManyToOne

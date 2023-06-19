@@ -56,6 +56,9 @@ public class PdObject {
     @Column(columnDefinition = "text")
     private String description;
 
+    @Column(columnDefinition = "text")
+    private String helpText;
+
     @OneToMany(mappedBy = "object", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties("object")
     private Set<ObjectComment> comments;
