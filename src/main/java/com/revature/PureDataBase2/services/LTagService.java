@@ -2,6 +2,7 @@ package com.revature.PureDataBase2.services;
 
 import java.util.Set;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -52,6 +53,15 @@ public class LTagService {
 
     public List<LTag> getAll() {
         return lTagRepo.findAll();
+    }
+
+    public List<String> getAllNames() {
+        List<LTag> tags = lTagRepo.findAllOrderByName();
+        List<String> names = new ArrayList<String>();
+        for(LTag tag : tags) {
+            names.add(tag.getName());
+        }
+        return names;
     }
 
     public LTag create(LTag lTag) {

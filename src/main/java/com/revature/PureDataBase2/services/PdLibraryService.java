@@ -197,6 +197,8 @@ public class PdLibraryService {
         if(editString != null) prevObject.setLibraryVersion(editString);
         editString = editObject.getDescription();
         if(editString != null) prevObject.setDescription(editString);
+        editString = editObject.getHelpText();
+        if(editString != null) prevObject.setHelpText(editString);
 
         Set<String> newTags = editObject.getObjectTags();
         if(newTags != null) {

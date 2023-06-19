@@ -48,9 +48,9 @@ public class TagController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Tag>> getAllTags() {
-        // return all libraries
-        return ResponseEntity.status(HttpStatus.OK).body(tagService.getAll());
+    public ResponseEntity<List<String>> getAllTags() {
+        // return all names
+        return ResponseEntity.status(HttpStatus.OK).body(tagService.getAllNames());
     }
 
     @GetMapping("{tagName}")

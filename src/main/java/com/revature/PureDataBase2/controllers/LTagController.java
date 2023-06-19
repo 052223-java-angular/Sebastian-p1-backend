@@ -47,9 +47,9 @@ public class LTagController {
     }
 
     @GetMapping
-    public ResponseEntity<List<LTag>> getAllTags() {
-        // return all libraries
-        return ResponseEntity.status(HttpStatus.OK).body(lTagService.getAll());
+    public ResponseEntity<List<String>> getAllTags() {
+        // return all names
+        return ResponseEntity.status(HttpStatus.OK).body(lTagService.getAllNames());
     }
 
     @GetMapping("{lTagName}")
