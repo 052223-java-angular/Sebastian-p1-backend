@@ -19,5 +19,5 @@ public interface LTagRepository extends JpaRepository<LTag, String> {
     Optional<LTag> findByNameIgnoreCase(String name);
     List<LTag> findByNameInOrderByName(Set<String> names);
     List<LTag> findByLibraryTagsLibrary(PdLibrary object);
-    List<LTag> findAllOrderByName();
+    List<LTag> findAllByOrderByName();
 }

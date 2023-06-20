@@ -56,7 +56,7 @@ public class LTagService {
     }
 
     public List<String> getAllNames() {
-        List<LTag> tags = lTagRepo.findAllOrderByName();
+        List<LTag> tags = lTagRepo.findAllByOrderByName();
         List<String> names = new ArrayList<String>();
         for(LTag tag : tags) {
             names.add(tag.getName());

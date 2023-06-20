@@ -56,7 +56,7 @@ public class TagService {
     }
 
     public List<String> getAllNames() {
-        List<Tag> tags = tagRepo.findAllOrderByName();
+        List<Tag> tags = tagRepo.findAllByOrderByName();
         List<String> names = new ArrayList<String>();
         for(Tag tag : tags) {
             names.add(tag.getName());
