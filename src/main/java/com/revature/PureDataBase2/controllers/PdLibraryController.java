@@ -1,6 +1,7 @@
 package com.revature.PureDataBase2.controllers;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import com.revature.PureDataBase2.entities.PdLibrary;
 import com.revature.PureDataBase2.entities.PdObject;
 import com.revature.PureDataBase2.entities.User;
 import com.revature.PureDataBase2.entities.ObjectComment;
+import com.revature.PureDataBase2.entities.LibraryTag;
 import com.revature.PureDataBase2.services.JWTService;
 import com.revature.PureDataBase2.services.UserService;
 import com.revature.PureDataBase2.services.PdLibraryService;
@@ -27,6 +29,7 @@ import com.revature.PureDataBase2.services.CommentService;
 import com.revature.PureDataBase2.util.custom_exceptions.ResourceConflictException;
 import com.revature.PureDataBase2.util.custom_exceptions.UnauthorizedException;
 import com.revature.PureDataBase2.DTO.requests.PdEditObject;
+import com.revature.PureDataBase2.DTO.responses.LibrarySummary;
 import com.revature.PureDataBase2.DTO.requests.PdEditLibrary;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,7 +38,7 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @RestController
-@CrossOrigin
+@CrossOrigin("*")
 @RequestMapping("/libraries")
 public class PdLibraryController {
     // dependency injection ie. services
@@ -63,9 +66,24 @@ public class PdLibraryController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PdLibrary>> getAllLibraries() {
-        // return all libraries
-        return ResponseEntity.status(HttpStatus.OK).body(pdLibraryService.getAll());
+    public ResponseEntity<List<LibrarySummary>> getAllLibraries() {
+        // return all libraries summary
+        List<PdLibrary> libList = pdLibraryService.getAll();
+        List<LibrarySummary> libSummaries = new ArrayList<LibrarySummary>();
+        for(PdLibrary library : libList) {
+            LibrarySummary curSum = new LibrarySummary();
+            curSum.setName(library.getName());
+            curSum.setAuthor(library.getAuthor());
+            curSum.setDescription(library.getDescription());
+            curSum.setRecentVersion(library.getRecentVersion());
+            List<String> sumStrings = new ArrayList<String>();
+            for(LibraryTag libTag : library.getLibraryTags()) {
+                sumStrings.add(libTag.getTag().getName());
+            }
+            curSum.setTags(sumStrings);
+            libSummaries.add(curSum);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(libSummaries);
     }
 
     @GetMapping("/{libName}")
@@ -82,8 +100,8 @@ public class PdLibraryController {
 
     @PostMapping("/{libName}")
     public ResponseEntity<?> saveObject(@PathVariable String libName,
-        @RequestBody PdObject object, HttpServletRequest req) {
-        // only users can create new library
+        @RequestBody PdEditObject object, HttpServletRequest req) {
+        // only users can create new object
         String userId = tokenService.extractUserId(req.getHeader("auth-token")); 
         // if library is not unique, throw exception
         User user = userService.getById(userId);
@@ -91,8 +109,8 @@ public class PdLibraryController {
         if(!pdLibraryService.isUniqueObjectName(object.getName(), libName)) {
             throw new ResourceConflictException("object already exists at path");
         }
-        object.setLibrary(library);
-        pdLibraryService.saveObject(object, user);
+
+        pdLibraryService.newObject(object, user, library);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -100,7 +118,6 @@ public class PdLibraryController {
     public ResponseEntity<?> updateLibrary(@PathVariable String libName,
         @RequestBody PdEditLibrary editLibrary, HttpServletRequest req) {
 
-        // only users can create new object
         String userId = tokenService.extractUserId(req.getHeader("auth-token")); 
         User user = userService.getById(userId);
 
@@ -115,7 +132,7 @@ public class PdLibraryController {
     public ResponseEntity<?> updateObject(@PathVariable String libName, @PathVariable String oldName,
         @RequestBody PdEditObject editObject, HttpServletRequest req) {
 
-        // only users can create new object
+        System.out.println("request made");
         String userId = tokenService.extractUserId(req.getHeader("auth-token")); 
         User user = userService.getById(userId);
 
