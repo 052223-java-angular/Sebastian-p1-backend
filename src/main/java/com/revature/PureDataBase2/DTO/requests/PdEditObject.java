@@ -19,5 +19,6 @@ public class PdEditObject {
     private String libName;
     private String author;
     private String description;
+    private String helpText;
     private Set<String> objectTags;
 }

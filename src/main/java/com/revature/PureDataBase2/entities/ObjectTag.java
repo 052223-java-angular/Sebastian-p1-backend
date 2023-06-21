@@ -12,11 +12,9 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
 @Entity
@@ -28,7 +26,7 @@ public class ObjectTag {
 
     @ManyToOne
     @JoinColumn(name = "object_id")
-    @JsonIgnoreProperties("objectTags")
+    @JsonIgnoreProperties({"objectTags", "helpText"})
     private PdObject object;
 
     @ManyToOne
@@ -42,4 +40,9 @@ public class ObjectTag {
         this.tag = tag;
     }
 
+    public ObjectTag() {
+        this.id = UUID.randomUUID().toString();
+        this.object = null;
+        this.tag = null;
+    }
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,6 +25,7 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @RestController
+@CrossOrigin
 @RequestMapping("/object_tags")
 public class TagController {
     // dependency injection ie. services
@@ -48,9 +50,9 @@ public class TagController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Tag>> getAllTags() {
-        // return all libraries
-        return ResponseEntity.status(HttpStatus.OK).body(tagService.getAll());
+    public ResponseEntity<List<String>> getAllTags() {
+        // return all names
+        return ResponseEntity.status(HttpStatus.OK).body(tagService.getAllNames());
     }
 
     @GetMapping("{tagName}")

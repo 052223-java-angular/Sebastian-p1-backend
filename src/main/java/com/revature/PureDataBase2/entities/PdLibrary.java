@@ -4,9 +4,7 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.UUID;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-//import com.fasterxml.jackson.annotation.JsonManagedReference;
-//import com.fasterxml.jackson.annotation.JsonBackReference;
+//import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -48,11 +46,11 @@ public class PdLibrary {
 
     @ManyToOne
     @JoinColumn(name = "last_edited_by")
-    @JsonIgnore
+    @JsonIgnoreProperties({"objectComments", "role", "likes", "email"})
     private User lastEditedBy;
 
     @OneToMany(mappedBy = "library", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnoreProperties({"library", "comments"})
+    @JsonIgnoreProperties("library")
     private Set<PdObject> objects;
     
     @OneToMany(mappedBy = "library", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

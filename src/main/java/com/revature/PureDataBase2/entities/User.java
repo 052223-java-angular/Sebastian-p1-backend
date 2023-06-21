@@ -31,7 +31,6 @@ import lombok.Setter;
 @Table(name = "users")
 public class User {
     @Id
-    @JsonIgnore
     private String id;
 
     @Column(nullable = false)

@@ -36,7 +36,7 @@ public class ObjectComment {
 
     @ManyToOne
     @JoinColumn(name = "object_id")
-    @JsonIgnoreProperties("comments")
+    @JsonIgnoreProperties({"comments", "helpText"})
     private PdObject object;
 
     @ManyToOne

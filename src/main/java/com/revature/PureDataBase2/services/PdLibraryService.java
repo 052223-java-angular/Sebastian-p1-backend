@@ -170,13 +170,35 @@ public class PdLibraryService {
         objectTags.addAll(remainderObjectTags);
     }
 
+    public PdObject newObject(PdEditObject editObject, User user, PdLibrary library) {
+        String nameString = editObject.getName();
+        PdObject newObject = new PdObject(nameString, library, user);
+
+        String editString = editObject.getAuthor();
+        if(editString != null) newObject.setAuthor(editString);
+        editString = editObject.getLibVersion();
+        if(editString != null) newObject.setLibraryVersion(editString);
+        editString = editObject.getDescription();
+        if(editString != null) newObject.setDescription(editString);
+        editString = editObject.getHelpText();
+        if(editString != null) newObject.setHelpText(editString);
+
+        Set<String> newTags = editObject.getObjectTags();
+        if(newTags != null) {
+            mergeObjectTags(newTags, newObject);
+        }
+
+        return objectRepo.save(newObject);
+    }
+
     public PdObject updateObject(PdEditObject editObject, PdObject prevObject, User user,
         String libName) {
         PdLibrary library;
 
         String nameString = editObject.getName();
         String editString = editObject.getLibName();
-        if(editString != null) {
+        if(nameString.equals(prevObject.getName()) && editString.equals(prevObject.getLibrary().getName()));
+        else if(editString != null) {
             if(nameString == null) nameString = prevObject.getName();
             library = this.getByName(editString);
             if(isUniqueObjectName(nameString, editString)) {
@@ -197,6 +219,8 @@ public class PdLibraryService {
         if(editString != null) prevObject.setLibraryVersion(editString);
         editString = editObject.getDescription();
         if(editString != null) prevObject.setDescription(editString);
+        editString = editObject.getHelpText();
+        if(editString != null) prevObject.setHelpText(editString);
 
         Set<String> newTags = editObject.getObjectTags();
         if(newTags != null) {

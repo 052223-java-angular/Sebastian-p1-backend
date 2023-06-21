@@ -56,8 +56,13 @@ public class PdObject {
     @Column(columnDefinition = "text")
     private String description;
 
+    @Column(columnDefinition = "text")
+    private String helpText;
+
     @OneToMany(mappedBy = "object", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties("object")
+    // comment editing is done through the 'comment' endpoint
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Set<ObjectComment> comments;
 
     @OneToMany(mappedBy = "object", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

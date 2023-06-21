@@ -84,7 +84,7 @@ public class UserService {
             }
         }
 
-        throw new UserNotFoundException("Invalid credential");
+        throw new UserNotFoundException("Invalid Credential");
     }
 
     /**
