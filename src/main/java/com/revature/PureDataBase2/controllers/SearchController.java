@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +25,7 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @RestController
+@CrossOrigin
 @RequestMapping("/search")
 public class SearchController {
     // dependency injection ie. services
@@ -41,27 +43,50 @@ public class SearchController {
         if(all || methods.contains("object_tag")) {
             try{
                 List<PdObject> tagObjs = tagService.getObjectsByTagName(term);
-                searchResults.setObjTagResults(tagObjs);
+                List<String> resStrings = new ArrayList<String>();
+                for(PdObject tagObj : tagObjs) {
+                    resStrings.add(tagObj.getLibrary().getName() + '/' + tagObj.getName());
+                }
+                searchResults.setObjTagResults(resStrings);
             } catch(TagNotFoundException e) {
-                searchResults.setObjTagResults(new ArrayList<PdObject>(0));
+                searchResults.setObjTagResults(new ArrayList<String>(0));
             }
         }
         if(all || methods.contains("library_tag")) {
             try{
                 List<PdLibrary> tagLibs = lTagService.getLibrariesByTagName(term);
-                searchResults.setLibTagResults(tagLibs);
+                List<String> resStrings = new ArrayList<String>();
+                for(PdLibrary tagLib : tagLibs) {
+                    resStrings.add(tagLib.getName());
+                }
+                searchResults.setLibTagResults(resStrings);
             } catch(TagNotFoundException e) {
-                searchResults.setLibTagResults(new ArrayList<PdLibrary>(0));
+                searchResults.setLibTagResults(new ArrayList<String>(0));
             }
         }
         if(all || methods.contains("library")) {
-            searchResults.setLibraryResults(libraryService.getByNameLike(term));
+            List<PdLibrary> libs = libraryService.getByNameLike(term);
+            List<String> resStrings = new ArrayList<String>();
+            for(PdLibrary lib : libs) {
+                resStrings.add(lib.getName());
+            }
+            searchResults.setLibraryResults(resStrings);
         }
         if(all || methods.contains("object")) {
-            searchResults.setObjectResults(libraryService.getObjectByNameLike(term));
+            List<PdObject> objs = libraryService.getObjectByNameLike(term);
+            List<String> resStrings = new ArrayList<String>();
+            for(PdObject obj : objs) {
+                resStrings.add(obj.getLibrary().getName() + '/' + obj.getName());
+            }
+            searchResults.setObjectResults(resStrings);
         }
         if(all || methods.contains("author")) {
-            searchResults.setAuthorResults(libraryService.getAuthorLibsByNameLike(term));
+            List<PdLibrary> libs = libraryService.getAuthorLibsByNameLike(term);
+            List<String> resStrings = new ArrayList<String>();
+            for(PdLibrary lib : libs) {
+                resStrings.add(lib.getName());
+            }
+            searchResults.setAuthorResults(resStrings);
         }
         return ResponseEntity.status(HttpStatus.OK).body(searchResults);
     }

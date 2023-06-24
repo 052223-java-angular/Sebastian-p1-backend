@@ -1,9 +1,6 @@
 package com.revature.PureDataBase2.DTO.responses;
 import java.util.List;
 
-import com.revature.PureDataBase2.entities.PdLibrary;
-import com.revature.PureDataBase2.entities.PdObject;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.AllArgsConstructor;
@@ -21,9 +18,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SearchResults {
-    List<PdLibrary> libraryResults;
-    List<PdObject> objectResults;
-    List<PdObject> objTagResults;
-    List<PdLibrary> libTagResults;
-    List<PdLibrary> authorResults;
+    List<String> libraryResults;
+    List<String> objectResults;
+    List<String> objTagResults;
+    List<String> libTagResults;
+    List<String> authorResults;
 }
