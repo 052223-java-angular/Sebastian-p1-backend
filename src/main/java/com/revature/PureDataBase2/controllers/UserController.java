@@ -4,6 +4,9 @@ package com.revature.PureDataBase2.controllers;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,19 +25,13 @@ import jakarta.servlet.http.HttpServletRequest;
  * The RoleController class provides operations related to role management.
  */
 @RestController
+@CrossOrigin
 @RequestMapping("/user")
 @AllArgsConstructor
 public class UserController {
     private final UserService userService;
     private final JWTService tokenService;
 
-    /**
-     * Creates a new role.
-     *
-     * @param req the NewRoleRequest object containing role creation details
-     * @return ResponseEntity with the HTTP status indicating the success or failure
-     *         of the role creation
-     */
     @PutMapping(value = "/edit")
     public ResponseEntity<?> updateUser(@RequestParam(required = false) String email,
         @RequestParam(name = "username", required = false) String newUsername,
@@ -65,5 +62,20 @@ public class UserController {
         }
         userService.save(user);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @DeleteMapping
+    public ResponseEntity<?> deleteProfilePic(HttpServletRequest req) {
+        String userId = tokenService.extractUserId(req.getHeader("auth-token"));
+        userService.deleteProfilePic(userId);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @GetMapping(value = "/me")
+    public ResponseEntity<User> thisUser(HttpServletRequest req) {
+        String userId = tokenService.extractUserId(req.getHeader("auth-token")); 
+        User user = userService.getById(userId);
+        return ResponseEntity.status(HttpStatus.OK).body(user);
     }
 }

@@ -18,8 +18,8 @@ import lombok.AllArgsConstructor;
 public class CommentService {
     private final ObjectCommentRepository objectCommentRepo;
 
-    public String create(String comment, PdObject pdObject, User user) {
-        return objectCommentRepo.save(new ObjectComment(comment, pdObject, user)).getId();
+    public void create(String comment, PdObject pdObject, User user) {
+        objectCommentRepo.save(new ObjectComment(comment, pdObject, user));
     }
 
     public ObjectComment getById(String id) {

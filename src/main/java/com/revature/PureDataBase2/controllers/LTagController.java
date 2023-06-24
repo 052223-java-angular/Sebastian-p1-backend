@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +24,7 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @RestController
+@CrossOrigin
 @RequestMapping("/library_tags")
 public class LTagController {
     // dependency injection ie. services

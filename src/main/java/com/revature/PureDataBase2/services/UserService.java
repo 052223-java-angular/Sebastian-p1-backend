@@ -4,6 +4,11 @@ import org.springframework.beans.factory.annotation.Value;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.awt.Graphics2D;
@@ -23,6 +28,7 @@ import com.revature.PureDataBase2.entities.User;
 import com.revature.PureDataBase2.repositories.UserRepository;
 
 import com.revature.PureDataBase2.util.custom_exceptions.UserNotFoundException;
+import com.revature.PureDataBase2.util.custom_exceptions.FilePersistenceException;
 import com.revature.PureDataBase2.util.custom_exceptions.WriteException;
 
 import lombok.AllArgsConstructor;
@@ -137,6 +143,18 @@ public class UserService {
         userRepo.save(user);
     }
 
+    public void deleteProfilePic(String userId) {
+        Path path = Paths.get(STATIC_PATH + "profile_pics/" + userId + ".jpg");
+        try {
+            Files.delete(path);
+        } catch (NoSuchFileException x) {
+            throw new FilePersistenceException(path.toString() + ": no such file or directory");
+        } catch (IOException x) {
+            // File permission problems are caught here.
+            throw new FilePersistenceException(x.getMessage());
+        }
+    }
+
     public void writeProfilePic(MultipartFile image, User user) {
         try (
             InputStream inputStream = new BufferedInputStream(image.getInputStream());
@@ -152,13 +170,14 @@ public class UserService {
                 int x = (width - height)/2;
                 bufImage = bufImage.getSubimage(x, 0, height, height);
             }
-            BufferedImage editImage = new BufferedImage(200, 200, BufferedImage.TYPE_INT_RGB);
+            BufferedImage editImage = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
             Graphics2D graphics2D = editImage.createGraphics();
-            graphics2D.drawImage(bufImage, 0, 0, 200, 200, null);
+            graphics2D.drawImage(bufImage, 0, 0, 100, 100, null);
             graphics2D.dispose();
             ImageIO.write(editImage, "jpeg", outputStream);
         } catch(IOException e) {
             throw new WriteException("unable to read/save profile picture: " + e);
         }
+        user.setHasProfilePic(true);
     }
 }

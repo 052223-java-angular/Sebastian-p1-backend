@@ -49,11 +49,11 @@ public class PdLibrary {
     @JsonIgnoreProperties({"objectComments", "role", "likes", "email"})
     private User lastEditedBy;
 
-    @OneToMany(mappedBy = "library", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "library", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties("library")
     private Set<PdObject> objects;
     
-    @OneToMany(mappedBy = "library", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "library", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties("library")
     private Set<LibraryTag> libraryTags;
 
