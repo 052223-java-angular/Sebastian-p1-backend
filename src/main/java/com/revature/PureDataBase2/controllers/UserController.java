@@ -41,7 +41,7 @@ public class UserController {
         User user = userService.getById(userId);
         if(newUsername == null) newUsername = "";
         if(email == null) email = "";
-        if(!newUsername.isEmpty()) {
+        if(!newUsername.isEmpty() && !newUsername.equals(user.getUsername())) {
             if(!userService.isUniqueUsername(newUsername)) {
                 throw new ResourceConflictException("username already exists");
             }
@@ -52,7 +52,7 @@ public class UserController {
             }
             user.setUsername(newUsername);
         }
-        if(!email.isEmpty()) {
+        if(!email.isEmpty() && !email.equals(user.getEmail())) {
             if(!userService.isValidEmail(email))
                 throw new InvalidFormatException("invalid email");
             user.setEmail(email);
