@@ -59,13 +59,13 @@ public class PdObject {
     @Column(columnDefinition = "text")
     private String helpText;
 
-    @OneToMany(mappedBy = "object", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "object", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties("object")
     // comment editing is done through the 'comment' endpoint
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Set<ObjectComment> comments;
 
-    @OneToMany(mappedBy = "object", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "object", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties("object")
     private Set<ObjectTag> objectTags;
 
@@ -77,6 +77,7 @@ public class PdObject {
         this.libraryVersion = "";
         this.lastEditedBy = createdBy;
         this.description = "";
+        this.helpText = "";
         this.comments = new HashSet<ObjectComment>();
         this.objectTags = new HashSet<ObjectTag>();
     }
@@ -86,6 +87,7 @@ public class PdObject {
         this.author = "";
         this.libraryVersion = "";
         this.description = "";
+        this.helpText = "";
         this.comments = new HashSet<ObjectComment>();
         this.objectTags = new HashSet<ObjectTag>();
     }

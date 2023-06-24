@@ -41,9 +41,9 @@ public class RecommendationService {
         boolean stopped = false;
     }
 
-    public Set<PdLibrary> getByLibrary(String userId) {
+    public List<String> getByLibrary(String userId) {
         List<Like> likes = likeService.getLibraryLikesForUser(userId);
-        Set<PdLibrary> ret = new HashSet<PdLibrary>();
+        List<String> ret = new ArrayList<String>();
         if(likes.isEmpty()) return ret;
         // tags we've already gone over
         // <tagName, PdObject list>
@@ -65,15 +65,17 @@ public class RecommendationService {
                 tagElem.tagName = tagName;
                 if(tagMap.containsKey(tagName)) {
                     if(!tagMap.get(tagName).isEmpty())
-                    tagBase.tags.add(tagElem);
+                        tagBase.tags.add(tagElem);
                     continue;
                 }
                 Set<LibraryTag> tagLibraryTags = tag.getLibraryTags();
                 List<PdLibrary> libList = new ArrayList<PdLibrary>();
                 for(LibraryTag tagLibraryTag : tagLibraryTags) {
                     PdLibrary addLibrary = tagLibraryTag.getLibrary();
-                    if(!libSeen.contains(addLibrary))
+                    if(!libSeen.contains(addLibrary)) {
+                        //System.out.println("library added to taglist: " + addLibrary.getName());
                         libList.add(addLibrary);
+                    }
                 }
                 // recommendations should be a bit different every time
                 tagMap.put(tagName, libList);
@@ -81,6 +83,7 @@ public class RecommendationService {
                 Collections.shuffle(libList);
                 tagBase.tags.add(tagElem);
             }
+            if(tagBase.tags.isEmpty()) continue;
             Collections.shuffle(tagBase.tags);
             likeList.add(tagBase);
         }
@@ -92,14 +95,20 @@ public class RecommendationService {
             TagBase currentBase = likeList.get(likeIdx);
             if(!currentBase.stopped) {
                 // loop through tags
+                //System.out.println("likeIdx: " + likeIdx);
                 tagLevel: while(true) {
+                    //System.out.println("current base #" + currentBase.idx);
                     TagElem currentElem = currentBase.tags.get(currentBase.idx);
                     List<PdLibrary> libraries = tagMap.get(currentElem.tagName);
-                    // loop through related objects
+                    //System.out.println("tagname: " + currentElem.tagName);
+                    //for(PdLibrary library : libraries) System.out.println(library.getName());
+                    //System.out.println("tagname: " + currentElem.tagName);
+                    // loop through related libraries
                     for(; currentElem.idx < libraries.size(); currentElem.idx++) {
                         PdLibrary lib = libraries.get(currentElem.idx);
                         if(!libSeen.contains(lib)) {
-                            ret.add(lib);
+                            ret.add(lib.getName());
+                            //System.out.println("added " + lib.getName());
                             libSeen.add(lib);
                             currentBase.lastIdx = currentBase.idx;
                             exhaustIdx = likeIdx;
@@ -123,9 +132,9 @@ public class RecommendationService {
         return ret;
     }
 
-    public Set<PdObject> getByObject(String userId) {
+    public List<String> getByObject(String userId) {
         List<Like> likes = likeService.getObjectLikesForUser(userId);
-        Set<PdObject> ret = new HashSet<PdObject>();
+        List<String> ret = new ArrayList<String>();
         if(likes.isEmpty()) return ret;
         // tags we've already gone over
         // <tagName, PdObject list>
@@ -163,6 +172,7 @@ public class RecommendationService {
                 Collections.shuffle(objList);
                 tagBase.tags.add(tagElem);
             }
+            if(tagBase.tags.isEmpty()) continue;
             Collections.shuffle(tagBase.tags);
             likeList.add(tagBase);
         }
@@ -181,7 +191,7 @@ public class RecommendationService {
                     for(; currentElem.idx < objects.size(); currentElem.idx++) {
                         PdObject obj = objects.get(currentElem.idx);
                         if(!objSeen.contains(obj)) {
-                            ret.add(obj);
+                            ret.add(obj.getLibrary().getName() + '/' + obj.getName());
                             objSeen.add(obj);
                             currentBase.lastIdx = currentBase.idx;
                             exhaustIdx = likeIdx;

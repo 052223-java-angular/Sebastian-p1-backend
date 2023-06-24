@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -40,15 +41,15 @@ public class User {
     @JsonIgnore
     private String password;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = "user")
     private Set<ObjectComment> objectComments;
 
-    @OneToMany(mappedBy = "lastEditedBy", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "lastEditedBy", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<PdLibrary> lastEditedByLibraries;
 
-    @OneToMany(mappedBy = "lastEditedBy", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "lastEditedBy", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<PdObject> lastEditedByObjects;
 
@@ -60,7 +61,11 @@ public class User {
 
     private String email;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Column(columnDefinition = "boolean default false")
+    private boolean hasProfilePic;
+
+    @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<Like> likes;
 
@@ -73,6 +78,7 @@ public class User {
         this.lastEditedByObjects = new HashSet<PdObject>();
         this.role = role;
         this.email = "";
+        this.hasProfilePic = false;
         this.likes = new TreeSet<Like>();
     }
 }

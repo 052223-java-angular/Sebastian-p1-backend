@@ -33,7 +33,7 @@ import com.revature.PureDataBase2.DTO.responses.LibrarySummary;
 import com.revature.PureDataBase2.DTO.requests.PdEditLibrary;
 
 import jakarta.servlet.http.HttpServletRequest;
-
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -48,7 +48,7 @@ public class PdLibraryController {
     private final PdLibraryService pdLibraryService;
 
     @PostMapping
-    public ResponseEntity<?> createLibrary(@RequestBody PdLibrary library,
+    public ResponseEntity<?> createLibrary(@RequestBody PdEditLibrary library,
             HttpServletRequest req) {
         // only users can create new library
         String userId = tokenService.extractUserId(req.getHeader("auth-token")); 
@@ -56,10 +56,6 @@ public class PdLibraryController {
         User user = userService.getById(userId);
         if (!pdLibraryService.isUnique(library.getName())) {
             throw new ResourceConflictException("Library is not unique");
-        }
-        for(PdObject o : library.getObjects()) {
-            o.setLibrary(library);
-            o.setLastEditedBy(user);
         }
         pdLibraryService.create(library, user);
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -132,7 +128,6 @@ public class PdLibraryController {
     public ResponseEntity<?> updateObject(@PathVariable String libName, @PathVariable String oldName,
         @RequestBody PdEditObject editObject, HttpServletRequest req) {
 
-        System.out.println("request made");
         String userId = tokenService.extractUserId(req.getHeader("auth-token")); 
         User user = userService.getById(userId);
 
@@ -143,6 +138,7 @@ public class PdLibraryController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    @Transactional
     @DeleteMapping("/{libName}/{objectName}")
     public ResponseEntity<?> deleteObject(@PathVariable String libName, @PathVariable String objectName,
         HttpServletRequest req) {
@@ -156,16 +152,16 @@ public class PdLibraryController {
     }
  
     @PostMapping("/{libName}/{objectName}/comment")
-    public ResponseEntity<String> postComment(@PathVariable String libName, @PathVariable String objectName,
+    public ResponseEntity<?> postComment(@PathVariable String libName, @PathVariable String objectName,
         HttpServletRequest req, @RequestBody String comment) {
         PdObject object = pdLibraryService.getObjectByNameAndLibraryName(objectName, libName);
 
         // only users can add comment
         String userId = tokenService.extractUserId(req.getHeader("auth-token")); 
         User user = userService.getById(userId);
-        String commentId = commentService.create(comment, object, user);
+        commentService.create(comment, object, user);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(commentId);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PutMapping("/{libName}/{objectName}/comment/{id}")

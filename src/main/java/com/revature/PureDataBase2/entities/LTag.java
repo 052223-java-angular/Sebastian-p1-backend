@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
@@ -23,7 +24,7 @@ public class LTag {
     @Id
     private String name;
 
-    @OneToMany(mappedBy = "tag", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "tag", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties("tag")
     private Set<LibraryTag> libraryTags;
 

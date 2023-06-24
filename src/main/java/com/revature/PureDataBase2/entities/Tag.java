@@ -3,6 +3,8 @@ package com.revature.PureDataBase2.entities;
 import java.util.HashSet;
 import java.util.Set;
 
+import jakarta.persistence.CascadeType;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Entity;
@@ -23,7 +25,7 @@ public class Tag {
     @Id
     private String name;
 
-    @OneToMany(mappedBy = "tag", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "tag", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties("tag")
     private Set<ObjectTag> objectTags;
 
