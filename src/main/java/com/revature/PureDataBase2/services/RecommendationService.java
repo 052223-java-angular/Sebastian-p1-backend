@@ -172,6 +172,7 @@ public class RecommendationService {
                 Collections.shuffle(objList);
                 tagBase.tags.add(tagElem);
             }
+            if(tagBase.tags.isEmpty()) continue;
             Collections.shuffle(tagBase.tags);
             likeList.add(tagBase);
         }
