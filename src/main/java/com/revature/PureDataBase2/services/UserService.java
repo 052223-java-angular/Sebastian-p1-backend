@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.awt.Graphics2D;
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -30,8 +31,6 @@ import com.revature.PureDataBase2.repositories.UserRepository;
 import com.revature.PureDataBase2.util.custom_exceptions.UserNotFoundException;
 import com.revature.PureDataBase2.util.custom_exceptions.FilePersistenceException;
 import com.revature.PureDataBase2.util.custom_exceptions.WriteException;
-
-import lombok.AllArgsConstructor;
 
 /**
  * The UserService class provides operations related to user management.
@@ -155,11 +154,12 @@ public class UserService {
         }
     }
 
-    public void writeProfilePic(MultipartFile image, User user) {
+    public File writeProfilePic(MultipartFile image) {
+        File convFile = new File(image.getOriginalFilename());
         try (
             InputStream inputStream = new BufferedInputStream(image.getInputStream());
             FileOutputStream outputStream =
-                new FileOutputStream(STATIC_PATH + "profile_pics/" + user.getId() + ".jpg");
+                new FileOutputStream(convFile);
         ) {
             BufferedImage bufImage = ImageIO.read(inputStream);
             int width = bufImage.getWidth();
@@ -178,6 +178,6 @@ public class UserService {
         } catch(IOException e) {
             throw new WriteException("unable to read/save profile picture: " + e);
         }
-        user.setHasProfilePic(true);
+        return convFile;
     }
 }
