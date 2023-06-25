@@ -3,6 +3,8 @@ package com.revature.PureDataBase2.controllers;
 import java.util.List;
 import java.util.ArrayList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,9 +29,6 @@ import com.revature.PureDataBase2.DTO.responses.LikeResult;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import lombok.AllArgsConstructor;
-
-@AllArgsConstructor
 @RestController
 @RequestMapping("/like")
 @CrossOrigin
@@ -39,6 +38,15 @@ public class LikeController {
     private final UserService userService;
     private final LikeService likeService;
     private final PdLibraryService libraryService;
+    private final Logger logger = LoggerFactory.getLogger(LikeController.class);
+
+    public LikeController(JWTService tokenService, UserService userService, LikeService likeService,
+        PdLibraryService libraryService) {
+        this.tokenService = tokenService;
+        this.userService = userService;
+        this.likeService = likeService;
+        this.libraryService = libraryService;
+    }
 
     @GetMapping
     public ResponseEntity<List<LikeResult>> getAllUserLikes(HttpServletRequest req) {
@@ -84,6 +92,7 @@ public class LikeController {
         // only users can like
         String userId = tokenService.extractUserId(req.getHeader("auth-token")); 
         User user = userService.getById(userId);
+        logger.trace("liking object " + libraryName + '/' + objectName + " for user " + userId);
         String objectId = libraryService.getObjectByNameAndLibraryName(objectName, libraryName).getId();
         if(likeService.hasUserLikedEntity(objectId, userId))
             throw new ResourceConflictException("already liked " + libraryName + '/' + objectName);
@@ -109,6 +118,7 @@ public class LikeController {
         String userId = tokenService.extractUserId(req.getHeader("auth-token")); 
         User user = userService.getById(userId);
         String libraryId = libraryService.getByName(libraryName).getId();
+        logger.trace("liking library " + libraryName + " for user " + userId);
         if(likeService.hasUserLikedEntity(libraryId, userId))
             throw new ResourceConflictException("already liked " + libraryName);
         Like like = new Like(Like.EntityType.LIBRARY, libraryId, user);
@@ -138,6 +148,7 @@ public class LikeController {
         // only users can like
         String userId = tokenService.extractUserId(req.getHeader("auth-token")); 
         String objectId = libraryService.getObjectByNameAndLibraryName(objectName, libraryName).getId();
+        logger.trace("unliking object " + libraryName + '/' + objectName + " for user " + userId);
         if(!likeService.hasUserLikedEntity(objectId, userId))
             throw new ResourceConflictException(libraryName + '/' + objectName + " isn't liked");
         likeService.deleteByEntityId(objectId, userId);
@@ -151,6 +162,7 @@ public class LikeController {
         // only users can like
         String userId = tokenService.extractUserId(req.getHeader("auth-token")); 
         String libraryId = libraryService.getByName(libraryName).getId();
+        logger.trace("unliking library " + libraryName + " for user " + userId);
         if(!likeService.hasUserLikedEntity(libraryId, userId))
             throw new ResourceConflictException(libraryName + " isn't liked");
         likeService.deleteByEntityId(libraryId, userId);

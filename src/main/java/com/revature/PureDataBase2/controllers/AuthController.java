@@ -30,7 +30,6 @@ import lombok.AllArgsConstructor;
 public class AuthController {
     private final UserService userService;
     private final JWTService tokenService;
-
     /**
      * Registers a new user.
      *
