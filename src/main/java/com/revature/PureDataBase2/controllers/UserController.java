@@ -1,6 +1,7 @@
-
 package com.revature.PureDataBase2.controllers;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -28,11 +29,17 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestController
 @CrossOrigin
 @RequestMapping("/user")
-@AllArgsConstructor
 public class UserController {
     private final UserService userService;
     private final JWTService tokenService;
     private final AmazonClient amazonClient;
+    private final Logger logger = LoggerFactory.getLogger(UserController.class);
+
+    public UserController(UserService userService, JWTService tokenService, AmazonClient amazonClient) {
+        this.userService = userService;
+        this.tokenService = tokenService;
+        this.amazonClient = amazonClient;
+    }
 
     @PutMapping(value = "/edit")
     public ResponseEntity<?> updateUser(@RequestParam(required = false) String email,
@@ -44,6 +51,7 @@ public class UserController {
         if(newUsername == null) newUsername = "";
         if(email == null) email = "";
         if(!newUsername.isEmpty() && !newUsername.equals(user.getUsername())) {
+            logger.trace("trying new username " + newUsername);
             if(!userService.isUniqueUsername(newUsername)) {
                 throw new ResourceConflictException("username already exists");
             }
@@ -55,11 +63,13 @@ public class UserController {
             user.setUsername(newUsername);
         }
         if(!email.isEmpty() && !email.equals(user.getEmail())) {
+            logger.trace("Setting email: " + email);
             if(!userService.isValidEmail(email))
                 throw new InvalidFormatException("invalid email");
             user.setEmail(email);
         }
         if(image != null) {
+            logger.trace("Setting image forr user: " + user.getId());
             this.amazonClient.uploadFileTos3bucket(user.getId() + ".jpg",
                 userService.writeProfilePic(image));
             user.setHasProfilePic(true);
@@ -68,9 +78,10 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @DeleteMapping
+    @DeleteMapping(value = "/profile_pic")
     public ResponseEntity<?> deleteProfilePic(HttpServletRequest req) {
         String userId = tokenService.extractUserId(req.getHeader("auth-token"));
+        logger.trace("Deleting image for user: " + userId);
         this.amazonClient.deleteObject(userId + ".jpg");
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -79,6 +90,7 @@ public class UserController {
     @GetMapping(value = "/me")
     public ResponseEntity<User> thisUser(HttpServletRequest req) {
         String userId = tokenService.extractUserId(req.getHeader("auth-token")); 
+        logger.trace("getting user: " + userId);
         User user = userService.getById(userId);
         return ResponseEntity.status(HttpStatus.OK).body(user);
     }

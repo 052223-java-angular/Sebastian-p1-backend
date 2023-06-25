@@ -3,6 +3,8 @@ package com.revature.PureDataBase2.controllers;
 import java.util.List;
 import java.util.ArrayList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -34,9 +36,7 @@ import com.revature.PureDataBase2.DTO.requests.PdEditLibrary;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
 
-@AllArgsConstructor
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/libraries")
@@ -46,6 +46,15 @@ public class PdLibraryController {
     private final UserService userService;
     private final CommentService commentService;
     private final PdLibraryService pdLibraryService;
+    private final Logger logger = LoggerFactory.getLogger(PdLibraryController.class);
+
+    public PdLibraryController(JWTService tokenService, UserService userService, CommentService commentService,
+        PdLibraryService pdLibraryService) {
+        this.tokenService = tokenService;
+        this.userService = userService;
+        this.commentService = commentService;
+        this.pdLibraryService = pdLibraryService;
+    }
 
     @PostMapping
     public ResponseEntity<?> createLibrary(@RequestBody PdEditLibrary library,
@@ -54,6 +63,7 @@ public class PdLibraryController {
         String userId = tokenService.extractUserId(req.getHeader("auth-token")); 
         // if library is not unique, throw exception
         User user = userService.getById(userId);
+        logger.trace("new library " + library.getName() + " from user " + userId);
         if (!pdLibraryService.isUnique(library.getName())) {
             throw new ResourceConflictException("Library is not unique");
         }
@@ -102,6 +112,7 @@ public class PdLibraryController {
         // if library is not unique, throw exception
         User user = userService.getById(userId);
         PdLibrary library = pdLibraryService.getByName(libName);
+        logger.trace("new object " + library.getName() + '/' + object.getName() + " from user " + userId);
         if(!pdLibraryService.isUniqueObjectName(object.getName(), libName)) {
             throw new ResourceConflictException("object already exists at path");
         }
@@ -118,6 +129,7 @@ public class PdLibraryController {
         User user = userService.getById(userId);
 
         PdLibrary prevLibrary = pdLibraryService.getByName(libName);
+        logger.trace("user " + userId + " updating library" + prevLibrary.getName());
 
         pdLibraryService.updateLibrary(editLibrary, prevLibrary, user);
 
@@ -133,6 +145,7 @@ public class PdLibraryController {
 
         PdObject prevObject = pdLibraryService.getObjectByNameAndLibraryName(oldName, libName);
 
+        logger.trace("user " + userId + " updating object " + libName + '/' + prevObject.getName());
         pdLibraryService.updateObject(editObject, prevObject, user, libName);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -142,9 +155,10 @@ public class PdLibraryController {
     @DeleteMapping("/{libName}/{objectName}")
     public ResponseEntity<?> deleteObject(@PathVariable String libName, @PathVariable String objectName,
         HttpServletRequest req) {
-
+        
         // only users can delete library
-        tokenService.extractUserId(req.getHeader("auth-token")); 
+        String userId = tokenService.extractUserId(req.getHeader("auth-token")); 
+        logger.trace("user " + userId + " deleting object " + libName + '/' + objectName);
 
         pdLibraryService.deleteObjectByNameAndLibraryName(objectName, libName);
 
@@ -159,6 +173,7 @@ public class PdLibraryController {
         // only users can add comment
         String userId = tokenService.extractUserId(req.getHeader("auth-token")); 
         User user = userService.getById(userId);
+        logger.trace("comment added by user " + userId);
         commentService.create(comment, object, user);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -175,6 +190,7 @@ public class PdLibraryController {
             throw new UnauthorizedException("unable to update comment: unauthorized");
 
         prevComment.setComment(editComment);
+        logger.trace("comment " + prevComment.getId() + " edited by user " + userId);
         commentService.update(prevComment);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -190,6 +206,7 @@ public class PdLibraryController {
         if(!prevComment.getUser().getId().equals(userId))
             throw new UnauthorizedException("unable to delete comment: unauthorized");
 
+        logger.trace("comment " + prevComment.getId() + " deleted by user " + userId);
         commentService.delete(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

@@ -13,17 +13,20 @@ import com.revature.PureDataBase2.DTO.responses.Principal;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class JWTService {
     @Value("${jwt.secret}")
     private String SECRET_KEY;
+    private final Logger logger = LoggerFactory.getLogger(JWTService.class);
 
     public String generateToken(Principal userPrincipal) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", userPrincipal.getId());
         claims.put("role", userPrincipal.getRole());
-
+        logger.debug("creating jwt token for user" + userPrincipal.getId());
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(userPrincipal.getUsername())

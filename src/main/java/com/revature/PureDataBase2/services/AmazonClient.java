@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AmazonClient {
-    Logger logger = LoggerFactory.getLogger(AmazonClient.class);
+    private final Logger logger = LoggerFactory.getLogger(AmazonClient.class);
     private AmazonS3 s3Client;
 
     @Value("${amazonProperties.bucketName}")
@@ -46,11 +46,14 @@ public class AmazonClient {
         }
     }
     public void deleteObject(String filename) {
+        logger.trace("deleting object " + filename + "from S3 bucket");
         this.s3Client.deleteObject(new DeleteObjectRequest(this.bucketName, filename));
     }
 
     public void uploadFileTos3bucket(String fileName, File file) {
+        logger.trace("uploading file " + fileName + " to S3 bucket");
         s3Client.putObject(new PutObjectRequest(bucketName, fileName, file));
+        logger.trace("deleting file " + file.getName() + "from server");
         file.delete();
     }
 }

@@ -18,16 +18,21 @@ import com.revature.PureDataBase2.entities.PdLibrary;
 import com.revature.PureDataBase2.entities.ObjectTag;
 import com.revature.PureDataBase2.entities.LibraryTag;
 
-import lombok.AllArgsConstructor;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 /**
  * The UserService class provides operations related to user management.
  */
 @Service
-@AllArgsConstructor
 public class RecommendationService {
     private final PdLibraryService libraryService;
     private final LikeService likeService;
+    private final Logger logger = LoggerFactory.getLogger(RecommendationService.class);
+
+    public RecommendationService(PdLibraryService libraryService, LikeService likeService) {
+        this.libraryService = libraryService;
+        this.likeService = likeService;
+    }
 
     private class TagElem {
         String tagName;
@@ -44,6 +49,7 @@ public class RecommendationService {
     public List<String> getByLibrary(String userId) {
         List<Like> likes = likeService.getLibraryLikesForUser(userId);
         List<String> ret = new ArrayList<String>();
+        logger.trace("getting library recommendations for " + userId);
         if(likes.isEmpty()) return ret;
         // tags we've already gone over
         // <tagName, PdObject list>
@@ -135,6 +141,7 @@ public class RecommendationService {
     public List<String> getByObject(String userId) {
         List<Like> likes = likeService.getObjectLikesForUser(userId);
         List<String> ret = new ArrayList<String>();
+        logger.trace("getting object recommendations for " + userId);
         if(likes.isEmpty()) return ret;
         // tags we've already gone over
         // <tagName, PdObject list>
