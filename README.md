@@ -61,7 +61,8 @@ Running requires java (preferably java 17) https://www.java.com/en/download/ and
 
 to run the backend, use the maven wrapper: ```./mvnw spring-boot: run```
 
-configure the appropriate variables in an 'application.properties' file in the 'src/main/resources' folder. Necessary variables are configuration for the relational datasource and hibernate.
+configure the appropriate variables in an 'application.properties' file in the 'src/main/resources' folder. Set configuration for the relational datasource (which uses jdbc) and hibernate.
+
 set ```jwt.secret``` to a secret many-byte 64-bit encoded string
 
 ### Profile Picture Support
