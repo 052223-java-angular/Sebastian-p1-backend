@@ -76,6 +76,34 @@ public class LikeController {
         return ResponseEntity.status(HttpStatus.OK).body(resultList);
     }
 
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<LikeResult>> getLikesForUser(@PathVariable String userId,
+        HttpServletRequest req) {
+        // return all likes
+        List<Like> likeList = likeService.getAllForUser(userId);
+        List<LikeResult> resultList = new ArrayList<LikeResult>();
+        PdLibrary library;
+        PdObject object;
+        for (Like like : likeList) {
+            switch(like.getEntityType()) {
+                case LIBRARY:
+                    library = libraryService.getById(like.getEntityId());
+                    resultList.add(new LikeResult("library", library.getName()));
+                    break;
+                case OBJECT:
+                    object = libraryService.getObjectByObjectId(like.getEntityId());
+                    resultList.add(new LikeResult("object",
+                        object.getLibrary().getName() + '/' + object.getName()));
+                    break;
+                case AUTHOR:
+                    resultList.add(new LikeResult("author", like.getEntityId()));
+                    break;
+                default: throw new ResourceConflictException("like without subject");
+            }
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(resultList);
+    }
+
     @GetMapping("/object/{libraryName}/{objectName}")
     public ResponseEntity<Boolean> hasUserLikedObject(@PathVariable String libraryName, 
         @PathVariable String objectName, HttpServletRequest req) {
