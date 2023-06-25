@@ -54,21 +54,19 @@ Pure Data is a visual dataflow programming environment for dsp, sound design, an
 - **Amazon Web Services (AWS)**: Will be used for hosting the application and the database, and managing other services like Lambda, S3, etc.
 - **Hibernate**: For object-relational mapping (ORM), allowing Java to interact with the database in an object-oriented manner.
 
-## Requirements
+Amazon S3 is used to store profile pictures
 
-- **Clean Codebase**: All code should be clean and well-documented. The repository should not include any unnecessary files or folders such as the `target/`, `.DS_Store`, etc. All files and directories should be appropriately named and organized.
+## Running
+to run the backend, use the wrapper: ```./mvnw spring-boot: run```
 
-- **Database Design**: The database should be designed following the principles of the 3rd Normal Form (3NF) to ensure data integrity and efficiency. An Entity Relationship Diagram (ERD) should be included in the documentation.
+configure the appropriate variables in an 'application.properties' file in the 'src/main/resources' folder. Necessary variables are configuration for the relational datasource and hibernate.
+set ```jwt.secret``` to a secret many-byte 64-bit encoded string
 
-- **Secure**: All sensitive user data such as passwords must be securely hashed before storing it in the database. The application should not display any sensitive information in error messages.
+### Profile Picture Support
+Profile pictures require an S3 bucket.
+For S3 you have to set these in application.properties:
+```amazonProperties.bucketName``` to your bucket name
+```amazonProperties.accessKey``` to the user access key
+```amazonProperties.secretKey``` to the user secret key
 
-- **Error Handling**: The application should handle potential errors gracefully and provide clear and helpful error messages to the users.
-
-- **Testing**: The application should have a high test coverage. Unit tests and integration tests should be implemented using JUnit, Mockito, and PowerMock.
-
-- **Version Control**: The application should be developed using a version control system, preferably Git, with regular commits denoting progress.
-
-- **Documentation**: The repository should include a README file with clear instructions on how to run the application. Code should be well-commented to allow for easy understanding and maintenance.
-
-- **Scalable**: The design of the application should be scalable, allowing for easy addition of new features or modifications in the future.
-
+In ```AmazonClient.java``` the s3 region is set to US_WEST_1, change it to your region.
