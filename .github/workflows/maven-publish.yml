@@ -29,7 +29,7 @@ jobs:
     # Write the application.properties to the resources dir
     - name: Create application.properties
       run: |
-        echo "${{ TEST_PROPERTIES }}" > src/main/resources/application.properties
+        echo "${{ secrets.APPLICATION_PROPERTIES }}" > src/main/resources/application.properties
 
     # This will build your Maven project
     - name: Build with Maven

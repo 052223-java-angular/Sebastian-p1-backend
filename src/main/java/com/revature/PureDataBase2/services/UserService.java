@@ -1,13 +1,8 @@
 package com.revature.PureDataBase2.services;
 
-import org.springframework.beans.factory.annotation.Value;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -29,7 +24,6 @@ import com.revature.PureDataBase2.entities.User;
 import com.revature.PureDataBase2.repositories.UserRepository;
 
 import com.revature.PureDataBase2.util.custom_exceptions.UserNotFoundException;
-import com.revature.PureDataBase2.util.custom_exceptions.FilePersistenceException;
 import com.revature.PureDataBase2.util.custom_exceptions.WriteException;
 
 /**
@@ -39,13 +33,10 @@ import com.revature.PureDataBase2.util.custom_exceptions.WriteException;
 public class UserService {
     private final RoleService roleService;
     private final UserRepository userRepo;
-    private final String STATIC_PATH;
 
-    public UserService(RoleService roleService, UserRepository userRepository,
-        @Value(value = "${puredatabase2.staticLocation}") String STATIC_PATH) {
+    public UserService(RoleService roleService, UserRepository userRepository) {
             this.roleService = roleService;
             this.userRepo = userRepository;
-            this.STATIC_PATH = STATIC_PATH;
     }
 
     public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
@@ -140,18 +131,6 @@ public class UserService {
 
     public void save(User user) {
         userRepo.save(user);
-    }
-
-    public void deleteProfilePic(String userId) {
-        Path path = Paths.get(STATIC_PATH + "profile_pics/" + userId + ".jpg");
-        try {
-            Files.delete(path);
-        } catch (NoSuchFileException x) {
-            throw new FilePersistenceException(path.toString() + ": no such file or directory");
-        } catch (IOException x) {
-            // File permission problems are caught here.
-            throw new FilePersistenceException(x.getMessage());
-        }
     }
 
     public File writeProfilePic(MultipartFile image) {
