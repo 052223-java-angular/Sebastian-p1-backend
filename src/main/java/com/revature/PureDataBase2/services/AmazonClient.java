@@ -44,5 +44,6 @@ public class AmazonClient {
 
     public void uploadFileTos3bucket(String fileName, File file) {
         s3client.putObject(new PutObjectRequest(bucketName, fileName, file));
+        file.delete();
     }
 }
