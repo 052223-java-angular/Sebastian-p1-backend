@@ -23,18 +23,26 @@ import com.revature.PureDataBase2.DTO.requests.PdEditLibrary;
 import com.revature.PureDataBase2.util.custom_exceptions.LibraryNotFoundException;
 import com.revature.PureDataBase2.util.custom_exceptions.ObjectNotFoundException;
 import com.revature.PureDataBase2.util.custom_exceptions.ResourceConflictException;
-
-import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
-@AllArgsConstructor
 public class PdLibraryService {
     private final PdLibraryRepository libraryRepo;
     private final PdObjectRepository objectRepo;
     private final TagService tagService;
     private final LTagService lTagService;
+    private final Logger logger = LoggerFactory.getLogger(PdLibraryService.class);
     // should I validate library name?
 
+    public PdLibraryService(PdLibraryRepository libraryRepo, PdObjectRepository objectRepo, TagService tagService,
+        LTagService lTagService) {
+        this.libraryRepo = libraryRepo;
+        this.objectRepo = objectRepo;
+        this.tagService = tagService;
+        this.lTagService = lTagService;
+    }
+    
     public PdObject getObjectByObjectId(String objectId) {
         Optional<PdObject> optObj = objectRepo.findById(objectId);
         if(optObj.isEmpty()) throw new ObjectNotFoundException("object not found for Id " + objectId);
@@ -135,6 +143,7 @@ public class PdLibraryService {
                 throw new ResourceConflictException("library " + editString + " already exists");
             prevLibrary.setName(editString);
         }
+        logger.trace("updating library " + prevLibrary.getName());
 
         editString = editLibrary.getAuthor();
         if(editString != null) prevLibrary.setAuthor(editString);
@@ -145,6 +154,7 @@ public class PdLibraryService {
 
         Set<String> newTags = editLibrary.getLibraryTags();
         if(newTags != null) {
+            logger.trace("merging/creating object tags for " + editLibrary.getName());
             mergeLibraryTags(newTags, prevLibrary);
         }
         prevLibrary.setLastEditedBy(user);
@@ -178,6 +188,7 @@ public class PdLibraryService {
     @Transactional
     public PdObject newObject(PdEditObject editObject, User user, PdLibrary library) {
         String nameString = editObject.getName();
+        logger.trace("creating object " + nameString);
         if(nameString == null) throw new RuntimeException("name was null");
         PdObject newObject = new PdObject(nameString, library, user);
 
@@ -193,6 +204,7 @@ public class PdLibraryService {
         Set<String> newTags = editObject.getObjectTags();
         // TODO: can probably just set the tags for new
         if(newTags != null) {
+            logger.trace("merging/creating object tags for " + editObject.getName());
             mergeObjectTags(newTags, newObject);
         }
 
@@ -234,12 +246,8 @@ public class PdLibraryService {
 
         Set<String> newTags = editObject.getObjectTags();
         if(newTags != null) {
+            logger.trace("merging/creating object tags for " + prevObject.getName());
             mergeObjectTags(newTags, prevObject);
-            System.out.println("after mergeTags");
-            System.out.println("taglist: ");
-            for(ObjectTag tag : prevObject.getObjectTags()) {
-                System.out.println("tag: " + tag.getTag().getName());
-            }
         }
         prevObject.setLastEditedBy(user);
 
@@ -249,6 +257,7 @@ public class PdLibraryService {
 
     public PdLibrary create(PdEditLibrary editLib, User user) {
         // create new library
+        logger.trace("creating library " + editLib.getName());
         PdLibrary library = new PdLibrary(editLib.getName(), user);
         library.setLastEditedBy(user);
 
@@ -262,6 +271,7 @@ public class PdLibraryService {
         Set<String> newTags = editLib.getLibraryTags();
         // TODO: can probably just set the tags for new
         if(newTags != null) {
+            logger.trace("merging/creating library tags for " + editLib.getName());
             mergeLibraryTags(newTags, library);
         }
 

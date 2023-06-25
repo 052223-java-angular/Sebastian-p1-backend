@@ -3,6 +3,8 @@ package com.revature.PureDataBase2.controllers;
 import java.util.List;
 import java.util.ArrayList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -21,9 +23,6 @@ import com.revature.PureDataBase2.services.LTagService;
 import com.revature.PureDataBase2.services.PdLibraryService;
 import com.revature.PureDataBase2.DTO.responses.SearchResults;
 
-import lombok.AllArgsConstructor;
-
-@AllArgsConstructor
 @RestController
 @CrossOrigin
 @RequestMapping("/search")
@@ -32,6 +31,13 @@ public class SearchController {
     private final PdLibraryService libraryService;
     private final TagService tagService;
     private final LTagService lTagService;
+    private final Logger logger = LoggerFactory.getLogger(SearchController.class);
+
+    public SearchController(PdLibraryService libraryService, TagService tagService, LTagService lTagService) {
+        this.libraryService = libraryService;
+        this.tagService = tagService;
+        this.lTagService = lTagService;
+    }
 
     @GetMapping("/{term}")
     public ResponseEntity<SearchResults> getResults(@PathVariable String term,
@@ -39,6 +45,7 @@ public class SearchController {
         SearchResults searchResults = new SearchResults();
         if(methods == null) methods = new ArrayList<String>();
         if(methods.size() == 0) methods.add("all");
+        logger.trace("searching " + term + " by methods " + String.join(",", methods));
         boolean all = methods.contains("all");
         if(all || methods.contains("object_tag")) {
             try{

@@ -25,6 +25,8 @@ import com.revature.PureDataBase2.repositories.UserRepository;
 
 import com.revature.PureDataBase2.util.custom_exceptions.UserNotFoundException;
 import com.revature.PureDataBase2.util.custom_exceptions.WriteException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The UserService class provides operations related to user management.
@@ -33,6 +35,7 @@ import com.revature.PureDataBase2.util.custom_exceptions.WriteException;
 public class UserService {
     private final RoleService roleService;
     private final UserRepository userRepo;
+    private final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     public UserService(RoleService roleService, UserRepository userRepository) {
             this.roleService = roleService;
@@ -57,6 +60,7 @@ public class UserService {
      * @return the newly registered User object
      */
     public User registerUser(NewUserRequest req) {
+        logger.trace("request to register user " + req.getUsername());
         // find role USER
         Role foundRole = roleService.findByName("USER");
 
@@ -71,6 +75,7 @@ public class UserService {
     }
 
     public Principal login(NewLoginRequest req) {
+        logger.trace("login for user " + req.getUsername());
         Optional<User> userOpt = userRepo.findByUsername(req.getUsername());
 
         if (userOpt.isPresent()) {
@@ -134,6 +139,7 @@ public class UserService {
     }
 
     public File writeProfilePic(MultipartFile image) {
+        logger.trace("creating file" + image.getOriginalFilename());
         File convFile = new File(image.getOriginalFilename());
         try (
             InputStream inputStream = new BufferedInputStream(image.getInputStream());

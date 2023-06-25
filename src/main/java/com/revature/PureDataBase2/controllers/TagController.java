@@ -1,8 +1,9 @@
-
 package com.revature.PureDataBase2.controllers;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,9 +22,6 @@ import com.revature.PureDataBase2.util.custom_exceptions.ResourceConflictExcepti
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import lombok.AllArgsConstructor;
-
-@AllArgsConstructor
 @RestController
 @CrossOrigin
 @RequestMapping("/object_tags")
@@ -31,12 +29,19 @@ public class TagController {
     // dependency injection ie. services
     private final JWTService tokenService;
     private final TagService tagService;
+    private final Logger logger = LoggerFactory.getLogger(TagController.class);
+
+    public TagController(JWTService tokenService, TagService tagService) {
+        this.tokenService = tokenService;
+        this.tagService = tagService;
+    }
 
     @PostMapping("/{tagString}")
     public ResponseEntity<?> createTag(@PathVariable String tagString,
             HttpServletRequest req) {
-        // only users can create new library
-        tokenService.extractUserId(req.getHeader("auth-token")); 
+        // only users can create new tag
+        String userId = tokenService.extractUserId(req.getHeader("auth-token")); 
+        logger.trace("new object tag " + tagString + " from user " + userId);
         // if library is not unique, throw exception
         tagString = tagString.toLowerCase();
         if (!tagService.isUnique(tagString)) {
