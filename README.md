@@ -57,7 +57,9 @@ Pure Data is a visual dataflow programming environment for dsp, sound design, an
 Amazon S3 is used to store profile pictures
 
 ## Running
-to run the backend, use the wrapper: ```./mvnw spring-boot: run```
+Running requires java (preferably java 17) https://www.java.com/en/download/ and maven https://maven.apache.org/download.cgi
+
+to run the backend, use the maven wrapper: ```./mvnw spring-boot: run```
 
 configure the appropriate variables in an 'application.properties' file in the 'src/main/resources' folder. Necessary variables are configuration for the relational datasource and hibernate.
 set ```jwt.secret``` to a secret many-byte 64-bit encoded string
@@ -68,5 +70,4 @@ For S3 you have to set these in application.properties:
 ```amazonProperties.bucketName``` to your bucket name
 ```amazonProperties.accessKey``` to the user access key
 ```amazonProperties.secretKey``` to the user secret key
-
-In ```AmazonClient.java``` the s3 region is set to US_WEST_1, change it to your region.
+``amazonProperties.region``` to the s3 bucket's region

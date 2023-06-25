@@ -25,15 +25,18 @@ public class AmazonClient {
 
     @Value("${amazonProperties.bucketName}")
     private String bucketName;
+    @Value("${amazonProperties.region}")
+    private String regionName;
     @Value("${amazonProperties.accessKey}")
     private String accessKey;
     @Value("${amazonProperties.secretKey}")
     private String secretKey;
+
     @PostConstruct
     private void initializeAmazon() {
         try {
        AWSCredentials credentials = new BasicAWSCredentials(this.accessKey, this.secretKey);
-        Regions regions = Regions.US_WEST_1;
+        Regions regions = Regions.fromName(this.regionName);
        this.s3Client = AmazonS3ClientBuilder.standard().withCredentials(
         new AWSStaticCredentialsProvider(credentials)).withRegion(regions).build();
         } catch (IllegalArgumentException e) {
