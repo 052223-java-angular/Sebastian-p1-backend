@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.revature.PureDataBase2.entities.User;
 import com.revature.PureDataBase2.services.UserService;
+import com.revature.PureDataBase2.services.AmazonClient;
 import com.revature.PureDataBase2.services.JWTService;
 import com.revature.PureDataBase2.util.custom_exceptions.ResourceConflictException;
 import com.revature.PureDataBase2.util.custom_exceptions.InvalidFormatException;
@@ -31,6 +32,7 @@ import jakarta.servlet.http.HttpServletRequest;
 public class UserController {
     private final UserService userService;
     private final JWTService tokenService;
+    private final AmazonClient amazonClient;
 
     @PutMapping(value = "/edit")
     public ResponseEntity<?> updateUser(@RequestParam(required = false) String email,
@@ -58,7 +60,9 @@ public class UserController {
             user.setEmail(email);
         }
         if(image != null) {
-            userService.writeProfilePic(image, user);
+            this.amazonClient.uploadFileTos3bucket(user.getId() + ".jpg",
+                userService.writeProfilePic(image));
+            user.setHasProfilePic(true);
         }
         userService.save(user);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
