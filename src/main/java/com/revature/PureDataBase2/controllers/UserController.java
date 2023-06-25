@@ -71,7 +71,7 @@ public class UserController {
     @DeleteMapping
     public ResponseEntity<?> deleteProfilePic(HttpServletRequest req) {
         String userId = tokenService.extractUserId(req.getHeader("auth-token"));
-        userService.deleteProfilePic(userId);
+        this.amazonClient.deleteObject(userId + ".jpg");
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
