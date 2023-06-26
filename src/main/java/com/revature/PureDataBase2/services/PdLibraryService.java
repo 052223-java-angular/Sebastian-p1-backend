@@ -212,8 +212,7 @@ public class PdLibraryService {
     }
 
     @Transactional
-    public PdObject updateObject(PdEditObject editObject, PdObject prevObject, User user,
-        String libName) {
+    public PdObject updateObject(PdEditObject editObject, PdObject prevObject, User user) {
         PdLibrary library;
 
         String nameString = editObject.getName();
