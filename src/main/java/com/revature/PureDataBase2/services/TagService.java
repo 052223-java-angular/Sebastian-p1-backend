@@ -38,7 +38,7 @@ public class TagService {
 
     public boolean isValidTag(String name) {
         char c;
-        if(name.length() == 0) return false;
+        if(name.isEmpty()) return false;
         for(int i = 0; i < name.length(); i++) {
             c = name.charAt(i);
             if(c < 'a' || c > 'z')

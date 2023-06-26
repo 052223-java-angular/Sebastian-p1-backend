@@ -42,7 +42,7 @@ public class RecommendationService {
     private class TagBase {
         ArrayList<TagElem> tags;
         int idx = 0;
-        int lastIdx = -1;
+        int lastIdx = 0;
         boolean stopped = false;
     }
 
@@ -95,20 +95,21 @@ public class RecommendationService {
         }
         if(likeList.isEmpty()) return ret;
         int likeIdx = 0;
-        int exhaustIdx = -1;
+        int nexhaustIdx = 0;
         // loop through likes
-        while(ret.size() < 5 && (exhaustIdx != likeIdx)) {
+        while(ret.size() < 5) {
             TagBase currentBase = likeList.get(likeIdx);
+            if(currentBase.stopped && likeIdx == nexhaustIdx) break;
             if(!currentBase.stopped) {
                 // loop through tags
                 //System.out.println("likeIdx: " + likeIdx);
-                tagLevel: while(true) {
+                boolean gotOne = false;
+                while(true) {
                     //System.out.println("current base #" + currentBase.idx);
                     TagElem currentElem = currentBase.tags.get(currentBase.idx);
                     List<PdLibrary> libraries = tagMap.get(currentElem.tagName);
                     //System.out.println("tagname: " + currentElem.tagName);
                     //for(PdLibrary library : libraries) System.out.println(library.getName());
-                    //System.out.println("tagname: " + currentElem.tagName);
                     // loop through related libraries
                     for(; currentElem.idx < libraries.size(); currentElem.idx++) {
                         PdLibrary lib = libraries.get(currentElem.idx);
@@ -116,21 +117,20 @@ public class RecommendationService {
                             ret.add(lib.getName());
                             //System.out.println("added " + lib.getName());
                             libSeen.add(lib);
+                            nexhaustIdx = likeIdx;
                             currentBase.lastIdx = currentBase.idx;
-                            exhaustIdx = likeIdx;
                             currentElem.idx++;
-                            currentBase.idx++;
-                            currentBase.idx %= currentBase.tags.size();
-                            break tagLevel;
+                            gotOne = true;
+                            break;
                         }
-                    }
-                    // last time we were the only one, so now we're stopped
-                    if(currentBase.idx == currentBase.lastIdx) {
-                        currentBase.stopped = true;
-                        break tagLevel;
                     }
                     currentBase.idx++;
                     currentBase.idx %= currentBase.tags.size();
+                    if(currentElem.idx >= libraries.size() && currentBase.lastIdx == currentBase.idx) {
+                        currentBase.stopped = true;
+                        break;
+                    }
+                    if(gotOne) break;
                 }
             }
             likeIdx = (likeIdx + 1) % likeList.size();
@@ -185,36 +185,42 @@ public class RecommendationService {
         }
         if(likeList.isEmpty()) return ret;
         int likeIdx = 0;
-        int exhaustIdx = -1;
+        int nexhaustIdx = 0;
         // loop through likes
-        while(ret.size() < 5 && (exhaustIdx != likeIdx)) {
+        while(ret.size() < 5) {
             TagBase currentBase = likeList.get(likeIdx);
+            if(currentBase.stopped && likeIdx == nexhaustIdx) break;
             if(!currentBase.stopped) {
                 // loop through tags
-                tagLevel: while(true) {
+                //System.out.println("likeIdx: " + likeIdx);
+                boolean gotOne = false;
+                while(true) {
+                    //System.out.println("current base #" + currentBase.idx);
                     TagElem currentElem = currentBase.tags.get(currentBase.idx);
                     List<PdObject> objects = tagMap.get(currentElem.tagName);
-                    // loop through related objects
+                    //System.out.println("tagname: " + currentElem.tagName);
+                    //for(PdObject object : objects) System.out.println(object.getName());
+                    // loop through related libraries
                     for(; currentElem.idx < objects.size(); currentElem.idx++) {
                         PdObject obj = objects.get(currentElem.idx);
                         if(!objSeen.contains(obj)) {
-                            ret.add(obj.getLibrary().getName() + '/' + obj.getName());
+                            ret.add(obj.getName());
+                            //System.out.println("added " + obj.getName());
                             objSeen.add(obj);
+                            nexhaustIdx = likeIdx;
                             currentBase.lastIdx = currentBase.idx;
-                            exhaustIdx = likeIdx;
                             currentElem.idx++;
-                            currentBase.idx++;
-                            currentBase.idx %= currentBase.tags.size();
-                            break tagLevel;
+                            gotOne = true;
+                            break;
                         }
-                    }
-                    // last time we were the only one, so now we're stopped
-                    if(currentBase.idx == currentBase.lastIdx) {
-                        currentBase.stopped = true;
-                        break tagLevel;
                     }
                     currentBase.idx++;
                     currentBase.idx %= currentBase.tags.size();
+                    if(currentElem.idx >= objects.size() && currentBase.lastIdx == currentBase.idx) {
+                        currentBase.stopped = true;
+                        break;
+                    }
+                    if(gotOne) break;
                 }
             }
             likeIdx = (likeIdx + 1) % likeList.size();

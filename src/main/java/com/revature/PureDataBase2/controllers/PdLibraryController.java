@@ -146,7 +146,7 @@ public class PdLibraryController {
         PdObject prevObject = pdLibraryService.getObjectByNameAndLibraryName(oldName, libName);
 
         logger.trace("user " + userId + " updating object " + libName + '/' + prevObject.getName());
-        pdLibraryService.updateObject(editObject, prevObject, user, libName);
+        pdLibraryService.updateObject(editObject, prevObject, user);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
