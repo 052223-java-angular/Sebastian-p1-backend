@@ -41,15 +41,15 @@ public class ExceptionController {
     }
 
     @ExceptionHandler(FilePersistenceException.class)
-    public ResponseEntity<Map<String, Object>> handleFilePersistenceException(ResourceConflictException e) {
+    public ResponseEntity<Map<String, Object>> handleFilePersistenceException(FilePersistenceException e) {
         Map<String, Object> map = new HashMap<>();
         map.put("timestamp", new Date(System.currentTimeMillis()));
         map.put("message", e.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(map);
     }
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
-    public ResponseEntity<Map<String, Object>> handleResourceConflictException(MaxUploadSizeExceededException e) {
+    public ResponseEntity<Map<String, Object>> handleMaxUploadSizeException(MaxUploadSizeExceededException e) {
         Map<String, Object> map = new HashMap<>();
         map.put("timestamp", new Date(System.currentTimeMillis()));
         map.put("message", e.getMessage());
@@ -57,7 +57,7 @@ public class ExceptionController {
     }
 
     @ExceptionHandler(CommentNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleObjectNotFoundException(CommentNotFoundException e) {
+    public ResponseEntity<Map<String, Object>> handleCommentNotFoundException(CommentNotFoundException e) {
         Map<String, Object> map = new HashMap<>();
         map.put("timestamp", new Date(System.currentTimeMillis()));
         map.put("message", e.getMessage());
@@ -73,7 +73,7 @@ public class ExceptionController {
     }
 
     @ExceptionHandler(WriteException.class)
-    public ResponseEntity<Map<String, Object>> handleLibraryNotFoundException(WriteException e) {
+    public ResponseEntity<Map<String, Object>> handleWriteException(WriteException e) {
         Map<String, Object> map = new HashMap<>();
         map.put("timestamp", new Date(System.currentTimeMillis()));
         map.put("message", e.getMessage());
