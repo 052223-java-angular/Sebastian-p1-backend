@@ -26,7 +26,7 @@ public class JWTService {
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", userPrincipal.getId());
         claims.put("role", userPrincipal.getRole());
-        logger.debug("creating jwt token for user" + userPrincipal.getId());
+        logger.debug("creating jwt token for user " + userPrincipal.getId());
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(userPrincipal.getUsername())

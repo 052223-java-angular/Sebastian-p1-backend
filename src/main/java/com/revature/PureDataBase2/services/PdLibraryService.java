@@ -42,6 +42,10 @@ public class PdLibraryService {
         this.tagService = tagService;
         this.lTagService = lTagService;
     }
+
+    public void save(PdLibrary lib) {
+        libraryRepo.save(lib);
+    }
     
     public PdObject getObjectByObjectId(String objectId) {
         Optional<PdObject> optObj = objectRepo.findById(objectId);
