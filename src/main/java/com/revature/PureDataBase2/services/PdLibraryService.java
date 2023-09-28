@@ -34,7 +34,7 @@ public class PdLibraryService {
     private final LTagService lTagService;
     private final Logger logger = LoggerFactory.getLogger(PdLibraryService.class);
     // should I validate library name?
-    
+
     public PdLibraryService(PdLibraryRepository libraryRepo, PdObjectRepository objectRepo, TagService tagService,
         LTagService lTagService) {
         this.libraryRepo = libraryRepo;
